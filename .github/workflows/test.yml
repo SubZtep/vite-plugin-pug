@@ -1,3 +1,4 @@
+name: npm test
 on: push
 jobs:
   setup-and-test:
