@@ -1,7 +1,7 @@
-import { compileFile } from "pug"
+import { compileFile, Options } from "pug"
 
-export const compilePugFile = (_: string, pugFile: string) => {
-  const compiler = compileFile(pugFile)
+export const compilePugFile = (options?: Options) => (_: string, pugFile: string) => {
+  const compiler = compileFile(pugFile, options)
   return compiler()
 }
 

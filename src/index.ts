@@ -1,7 +1,8 @@
 import type { Plugin } from "vite"
+import type { Options } from "pug"
 import { composeTemplate, compilePugFile } from "./transformer"
 
-export default (): Plugin => ({
+export default (options?: Options): Plugin => ({
   name: "vite-plugin-pug",
 
   handleHotUpdate({ file, server }) {
@@ -15,7 +16,7 @@ export default (): Plugin => ({
   transformIndexHtml: {
     enforce: "pre",
     transform(html) {
-      return composeTemplate(html, compilePugFile)
+      return composeTemplate(html, compilePugFile(options))
     },
   },
 })
