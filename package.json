@@ -28,7 +28,7 @@
   },
   "homepage": "https://github.com/SubZtep/vite-plugin-pug#readme",
   "peerDependencies": {
-    "vite": "~2.0.0-beta"
+    "vite": "~2.0.0-beta.69"
   },
   "devDependencies": {
     "@types/pug": "^2.0.4",
