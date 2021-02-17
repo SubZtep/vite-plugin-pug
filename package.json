@@ -1,6 +1,6 @@
 {
   "name": "vite-plugin-pug",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Vite plugin for transform Pug templates into HTML",
   "main": "dist/index.js",
   "files": [
@@ -28,7 +28,7 @@
   },
   "homepage": "https://github.com/SubZtep/vite-plugin-pug#readme",
   "peerDependencies": {
-    "vite": "~2.0.0-beta.69"
+    "vite": "~2.0.0"
   },
   "devDependencies": {
     "@types/pug": "^2.0.4",
