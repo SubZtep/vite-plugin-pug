@@ -4,6 +4,8 @@
 
 A plugin that makes [Vite](https://vitejs.dev/) parse `<pug file="example.pug"></pug>` in your `index.html`. The rendered template replaces this tag with the compiled markup.
 
+> :information_source: **Vue** single file components don't require this plugin, adding [Pug](https://www.npmjs.com/package/pug) to the dependency list is enough. — aka `npm i -D pug`
+
 - Handle self-closing tags.
 - Works with multiple `pug` tags.
 - Generated _TypeScript_ declarations.
@@ -67,6 +69,8 @@ Embed `pug` tag with `file` attribute somewhere.
 ```
 
 That's it.
+
+> :bulb: Check out **an example** implementation [in this repository](https://github.com/SubZtep/css-tetris-3d).
 
 ## Contribution
 
