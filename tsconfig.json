@@ -1,18 +1,24 @@
 {
   "compilerOptions": {
+    "module": "ESNext",
     "target": "ESNext",
-    "module": "CommonJS",
-    "lib": ["ESNext"],
     "moduleResolution": "Node",
     "declaration": true,
     "declarationMap": false,
-    "sourceMap": false,
     "outDir": "dist",
     "strict": true,
     "removeComments": true,
-    "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "baseUrl": ".",
+    "types": ["vite/client"],
+    "allowJs": true,
+    "typeRoots": [
+      "./src/types",
+      "node_modules/@types"
+    ],
   },
-  "include": ["src"]
+  "include": ["./src/**/*.ts", "./__test__/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
 }

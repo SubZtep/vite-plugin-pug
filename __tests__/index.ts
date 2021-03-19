@@ -1,8 +1,8 @@
-import { composeTemplate } from "../src/transformer"
+import { composeTemplate } from "../src/index"
 
 describe("compose template", () => {
   test("single tag", () => {
-    expect(composeTemplate(`<pug file="test.pug"/>`, (_, fn) => fn)).toBe("test.pug")
+    expect(composeTemplate(`<pug file="test.pug"/>`, (_: string, fn: string) => fn)).toBe("test.pug")
   })
 
   test("various tags", () => {
