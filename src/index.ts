@@ -1,7 +1,5 @@
 // import chalk from "chalk"
-import { dirname } from "path"
 import { readFileSync } from "fs"
-import { readFile } from "fs/promises"
 import { normalizePath } from "vite"
 import type { HmrContext, Plugin } from "vite"
 import type { Options, LocalsObject } from "pug"
@@ -46,9 +44,9 @@ export default (options?: Options, locals?: LocalsObject): Plugin => {
   return {
     name: "vite-plugin-pug",
 
-    load(id) {
+    load(id: string) {
       if (id.endsWith(virtualFileId)) {
-        return readFile(normalizePath(dirname(import.meta.url.split("//").pop()!) + "/hot.js"), "utf8")
+        return `hot.js`
       }
     },
 
@@ -81,7 +79,7 @@ export default (options?: Options, locals?: LocalsObject): Plugin => {
     },
 
     transformIndexHtml: {
-      transform(html) {
+      transform(html: string) {
         const pugless = composeTemplate(html, compilePugFile(options, locals))
         const script = `<script type="module" src="${virtualFileId}"></script>`
         const pos = pugless.indexOf("</head>")
