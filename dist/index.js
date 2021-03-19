@@ -1,4 +1,3 @@
-import chalk from "chalk";
 import { dirname } from "path";
 import { readFileSync } from "fs";
 import { readFile } from "fs/promises";
@@ -46,13 +45,13 @@ export default (options, locals) => {
                     mediaQuery,
                 ]);
                 if (data.length === 0) {
-                    server.config.logger.info(`${chalk.redBright("Pug’s Not Hot:")} ${chalk.cyan(hotFile)}`);
+                    server.config.logger.info(`Pug’s Not Hot: ${hotFile}`);
                     server.ws.send({
                         type: "full-reload",
                     });
                     return;
                 }
-                server.config.logger.info(`${chalk.greenBright("Hot Pug:")} ${chalk.cyan(hotFile)}`);
+                server.config.logger.info(`Hot Pug: ${hotFile}`);
                 server.ws.send({
                     type: "custom",
                     event: "pug-update",
