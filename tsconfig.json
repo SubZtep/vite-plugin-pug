@@ -18,10 +18,10 @@
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     // "isolatedModules": true,
-    "baseUrl": ".",
+    "rootDir": ".",
     // "types": ["vite/client"],
     "typeRoots": ["types", "node_modules/@types"]
   },
-  "include": ["src", "types"],
+  "include": ["src", "types", "scripts"],
   "exclude": ["node_modules", "dist"]
 }

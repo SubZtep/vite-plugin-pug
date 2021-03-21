@@ -1,8 +1,5 @@
 const { join } = require("path")
-const { execSync } = require("child_process")
 const { readFileSync, writeFileSync } = require("fs")
-
-execSync("tsc", { cwd: join(__dirname, "..") })
 
 const distFile = join(__dirname, "../dist/index.js")
 const hotFile = join(__dirname, "../src/hot.js")

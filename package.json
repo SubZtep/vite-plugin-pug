@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "tsc -w",
     "forest": "ts-node scripts/forest.ts",
-    "build": "node scripts/build.js",
+    "build": "tsc -p ./tsconfig.build.json && node scripts/postbuild.js",
     "esbuild": "esbuild src/index.ts --loader:./hot.js=text",
     "wipe": "bash scripts/wipe.sh",
     "test": "jest"

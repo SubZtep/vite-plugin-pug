@@ -16,7 +16,7 @@ const ast2: Pug.Block = parse(tokens2, { filename: filename2, src: src2 })
 // console.log(JSON.stringify(lex(src, { filename }), null, "  "))
 // console.log(JSON.stringify(ast1, null, "  "))
 
-class DefaultXTreeDiff extends XTreeDiffPlus<XTree, string> {
+class DefaultXTreeDiff extends XTreeDiffPlus<XTree, XTree<Pug.Node>> {
   public buildXTree(tree: XTree) {
     return tree
   }
@@ -26,54 +26,55 @@ class DefaultXTreeDiff extends XTreeDiffPlus<XTree, string> {
   }
 }
 
-const serializeAttrs = (attrs: Pug.Attr[]) => attrs.map(({ name, val }) => `${name}=${val}`).join(", ")
+const serializeNode = (node: Pug.Node) =>
+  [
+    node.name,
+    // FIXME: merge duplicated attributes, eg: .c1(class="c2")
+    node.attrs.map(({ name, val }) => `${name}=${val.replaceAll(/^['"]|['"]$/g, "")}`).join(","),
+  ].join("|")
 
-const astWalker = (block: Pug.Block, level = 0): XTree[] | undefined => {
+const astWalker = ({ nodes }: Pug.Block): XTree<Pug.Node>[] => {
   const children: XTree[] = []
-  for (const [index, node] of block.nodes.entries()) {
-    if (node.type === "Tag") {
-      children.push(
-        new XTree({
-          label: node.name,
-          type: NodeType.ELEMENT,
-          index: index + 1,
-          children: astWalker(node.block, level + 1),
-          data: serializeAttrs(node.attrs),
-        })
-      )
-    }
+  for (const [index, node] of nodes.filter(node => node.type === "Tag").entries()) {
+    const tree = new XTree({
+      type: NodeType.ELEMENT,
+      // TODO: check id's real behaviour
+      // id: node.attrs.find(attr => attr.name === "id")?.val,
+      label: serializeNode(node),
+      data: node,
+      index,
+    })
+    tree.append(astWalker(node.block))
+    children.push(tree)
   }
-
-  return children.length > 0 ? children : undefined
+  return children
 }
 
 const tree1: XTree = astWalker(ast1)![0]
 const tree2: XTree = astWalker(ast2)![0]
 
-const { oldTree, newTree } = (new DefaultXTreeDiff(tree1, tree2).diff() as unknown) as {
-  oldTree: XTree
-  newTree: XTree
-}
+const { oldTree, newTree } = new DefaultXTreeDiff(tree1, tree2).diff()
 
-const diffWalker = (node: XTree) => {
+const diffWalker = (node: XTree<Pug.Node>) => {
   switch (node.Op) {
     case EditOption.INS:
-      console.log("Insert", [node.label, node.data, node.index])
+      console.log("Insert", [node.label, node.index])
       break
     case EditOption.DEL:
-      console.log("Delete", [node.label, node.data])
+      console.log("Delete", [node.label, node.index])
       break
     case EditOption.UPD:
-      console.log("UPD", node)
+      console.log("Update", [node.label, node.index])
       break
     case EditOption.MOV:
-      console.log("MOV", node)
+      console.log("Move", [node.label, node.index])
       break
   }
-
   node.forEach(diffWalker)
 }
 
+console.log("OLD")
 diffWalker(oldTree)
+console.log("NEW")
 diffWalker(newTree)
 // console.dir(diff.newTree, { depth: 10 })

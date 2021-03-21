@@ -7,7 +7,7 @@ namespace Pug {
   }
 
   interface Node {
-    type: "Tag"
+    type: "Tag" | "Comment"
     name: string
     selfClosing: boolean
     block: Block
