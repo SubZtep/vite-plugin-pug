@@ -1,8 +1,8 @@
 import chalk from "chalk"
 import { compileFile } from "pug"
-import { fileURLToPath } from "url"
-import { dirname, join } from "path"
-import { readFile } from "fs/promises"
+import { fileURLToPath } from "node:url"
+import { dirname, join } from "node:path"
+import { readFile } from "node:fs/promises"
 import type { HmrContext, Plugin } from "vite"
 import type { Options, LocalsObject } from "pug"
 import { composeTemplate } from "./transformer.js"
@@ -16,7 +16,7 @@ export default (options?: Options, locals?: LocalsObject): Plugin => {
 
     load(id: string) {
       if (id.endsWith(virtualFileId)) {
-        return readFile(fileURLToPath(join(dirname(import.meta.url), "hot.js")), { encoding: "utf8" })
+        return readFile(fileURLToPath(join(dirname(import.meta.url), "hot.client.js")), { encoding: "utf8" })
       }
     },
 
@@ -26,6 +26,11 @@ export default (options?: Options, locals?: LocalsObject): Plugin => {
 
         const data = hotPugs
           .filter(({ main, dependencies }) => [main, ...dependencies].includes(hotFile))
+          .map(hot => {
+            console.log("HOT", hot)
+            //TODO: compare cached
+            return hot
+          })
           .map(({ main, query }) => [compileFile(main, options)(locals), query])
 
         if (data.length === 0) {

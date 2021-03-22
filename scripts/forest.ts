@@ -1,8 +1,8 @@
-import { readFileSync } from "fs"
-import chalk from "chalk"
-import lex from "pug-lexer"
-import parse from "pug-parser"
 import { XTreeDiffPlus, XTree, NodeType, EditOption } from "@dovyih/x-tree-diff-plus"
+import { readFileSync } from "fs"
+import parse from "pug-parser"
+import lex from "pug-lexer"
+import chalk from "chalk"
 
 const filename1 = "./scripts/af1.pug"
 const filename2 = "./scripts/af2.pug"
@@ -13,12 +13,12 @@ const tokens2 = lex(src2, { filename: filename2 })
 const ast1: Pug.Block = parse(tokens1, { filename: filename1, src: src1 })
 const ast2: Pug.Block = parse(tokens2, { filename: filename2, src: src2 })
 
-class DefaultXTreeDiff extends XTreeDiffPlus<XTree, XTree<Pug.Node>> {
-  public buildXTree(tree: XTree) {
-    return tree
+class PugAstDiff extends XTreeDiffPlus<Pug.Block, Pug.Node> {
+  public buildXTree(ast: Pug.Block) {
+    return astWalker(ast.nodes)![0]
   }
 
-  public dumpXTree(oldTree: XTree, newTree: XTree): { oldTree: XTree; newTree: XTree } {
+  public dumpXTree(oldTree: XTree<Pug.Node>, newTree: XTree<Pug.Node>) {
     return { oldTree, newTree }
   }
 }
@@ -33,10 +33,10 @@ const serializeNode = (node: Pug.Node) =>
 const nodeId = (node: Pug.Node, depth?: number, index?: number) =>
   node.attrs.find(attr => attr.name === "id")?.val || `${depth}-${index}-${node.name}`
 
-const astWalker = ({ nodes }: Pug.Block, depth = 0): XTree<Pug.Node>[] => {
+const astWalker = (nodes: Pug.Node[], depth = 0): XTree<Pug.Node>[] => {
   const children: XTree[] = []
   for (const [index, node] of nodes.filter(node => node.type === "Tag").entries()) {
-    const tree = new XTree({
+    const tree = new XTree<Pug.Node>({
       type: NodeType.ELEMENT,
       // TODO: check id's real behaviour
       id: nodeId(node, depth, index),
@@ -44,16 +44,13 @@ const astWalker = ({ nodes }: Pug.Block, depth = 0): XTree<Pug.Node>[] => {
       data: node,
       index,
     })
-    tree.append(astWalker(node.block, depth + 1))
+    tree.append(astWalker(node.block.nodes, depth + 1))
     children.push(tree)
   }
   return children
 }
 
-const tree1: XTree = astWalker(ast1)![0]
-const tree2: XTree = astWalker(ast2)![0]
-
-const { oldTree, newTree } = new DefaultXTreeDiff(tree1, tree2).diff()
+const { oldTree, newTree } = new PugAstDiff(ast1, ast2).diff()
 
 const diffWalker = (node: XTree<Pug.Node>) => {
   switch (node.Op) {
@@ -77,4 +74,3 @@ console.log(chalk.bold.dim("OLD"))
 diffWalker(oldTree)
 console.log(chalk.bold.dim("NEW"))
 diffWalker(newTree)
-// console.dir(diff.newTree, { depth: 10 })

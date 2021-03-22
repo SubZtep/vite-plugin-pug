@@ -11,7 +11,7 @@ import pkg from "../package.json"
 
 const currDir = dirname(fileURLToPath(import.meta.url))
 const distDir = join(currDir, "../dist")
-const toDir = join(currDir, `../../aframe-playground/src/${pkg.name}`)
+const toDir = join(currDir, `../../aframe-playground/node_modules/${pkg.name}/dist`)
 let lock = false
 
 const build = () => {

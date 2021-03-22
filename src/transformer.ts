@@ -1,6 +1,6 @@
 import type { Options, LocalsObject } from "pug"
 import { compileClientWithDependenciesTracked, compileFile } from "pug"
-import { readFileSync } from "fs"
+import { readFileSync } from "node:fs"
 import { normalizePath } from "vite"
 
 export const composeTemplate = (html: string, options?: Options, locals?: LocalsObject): [string, HotPug[]] => {

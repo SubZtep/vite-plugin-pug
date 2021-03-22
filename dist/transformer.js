@@ -1,5 +1,5 @@
 import { compileClientWithDependenciesTracked, compileFile } from "pug";
-import { readFileSync } from "fs";
+import { readFileSync } from "node:fs";
 import { normalizePath } from "vite";
 export const composeTemplate = (html, options, locals) => {
     const hots = [];

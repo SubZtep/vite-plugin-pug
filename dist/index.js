@@ -1,8 +1,8 @@
 import chalk from "chalk";
 import { compileFile } from "pug";
-import { fileURLToPath } from "url";
-import { dirname, join } from "path";
-import { readFile } from "fs/promises";
+import { fileURLToPath } from "node:url";
+import { dirname, join } from "node:path";
+import { readFile } from "node:fs/promises";
 import { composeTemplate } from "./transformer.js";
 export default (options, locals) => {
     const virtualFileId = "@pug-updater";
@@ -11,7 +11,7 @@ export default (options, locals) => {
         name: "vite-plugin-pug",
         load(id) {
             if (id.endsWith(virtualFileId)) {
-                return readFile(fileURLToPath(join(dirname(import.meta.url), "hot.js")), { encoding: "utf8" });
+                return readFile(fileURLToPath(join(dirname(import.meta.url), "hot.client.js")), { encoding: "utf8" });
             }
         },
         handleHotUpdate({ file, server }) {
@@ -19,6 +19,10 @@ export default (options, locals) => {
                 const hotFile = file.slice(server.config.root.length).replace(/^\//, "");
                 const data = hotPugs
                     .filter(({ main, dependencies }) => [main, ...dependencies].includes(hotFile))
+                    .map(hot => {
+                    console.log("CCC", hot);
+                    return hot;
+                })
                     .map(({ main, query }) => [compileFile(main, options)(locals), query]);
                 if (data.length === 0) {
                     server.config.logger.info(chalk `{redBright Pug’s Not Hot:} {cyan ${hotFile}}`);
