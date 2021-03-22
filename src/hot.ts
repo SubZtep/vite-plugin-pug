@@ -41,6 +41,7 @@ if (import.meta.hot) {
   const updater = ([html, query]) => {
     pugDocument = parser.parseFromString(html, "text/html")
 
+    // @ts-ignore
     domWalker = document.createTreeWalker(document.querySelector(query), ...walkerParams)
     pugWalker = pugDocument.createTreeWalker(pugDocument.body, ...walkerParams)
 
@@ -55,5 +56,5 @@ if (import.meta.hot) {
     }
   }
 
-  import.meta.hot.on("pug-update", data => data.forEach(updater))
+  import.meta.hot!.on("pug-update", data => data.forEach(updater))
 }

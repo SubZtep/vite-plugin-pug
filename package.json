@@ -2,15 +2,16 @@
   "name": "vite-plugin-pug",
   "version": "0.2.0",
   "description": "Vite plugin for transform Pug templates into HTML",
+  "type": "module",
   "main": "dist/index.js",
   "files": [
     "dist"
   ],
   "scripts": {
-    "dev": "tsc -w",
-    "forest": "ts-node scripts/forest.ts",
-    "build": "tsc -p ./tsconfig.build.json && node scripts/postbuild.js",
-    "esbuild": "esbuild src/index.ts --loader:./hot.js=text",
+    "dev": "node --experimental-json-modules scripts/watcher.js",
+    "typecheck": "tsc --noEmit",
+    "forest": "node --loader ts-node/esm.mjs scripts/forest.ts",
+    "build": "tsc -p ./tsconfig.build.json",
     "wipe": "bash scripts/wipe.sh",
     "test": "jest"
   },
@@ -32,14 +33,13 @@
   "homepage": "https://github.com/SubZtep/vite-plugin-pug#readme",
   "dependencies": {
     "@dovyih/x-tree-diff-plus": "^0.1.4",
-    "pug": "^3.0.2",
-    "pug-lexer": "^5.0.1",
-    "pug-parser": "^6.0.0"
+    "pug": "^3.0.2"
   },
   "devDependencies": {
     "@types/jest": "^26.0.21",
     "@types/node": "^14.14.35",
     "@types/pug": "^2.0.4",
+    "fs-extra": "^9.1.0",
     "jest": "^26.6.3",
     "ts-jest": "^26.5.4",
     "ts-node": "^9.1.1",

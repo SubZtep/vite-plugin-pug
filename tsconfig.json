@@ -3,9 +3,9 @@
     "transpileOnly": true
   },
   "compilerOptions": {
-    "module": "CommonJS",
+    "module": "ESNext",
     "target": "ESNext",
-    "lib": ["ESNext"],
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "moduleResolution": "Node",
     "declaration": true,
     "declarationMap": false,
@@ -17,9 +17,8 @@
     "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
-    // "isolatedModules": true,
     "rootDir": ".",
-    // "types": ["vite/client"],
+    "types": ["vite/client"],
     "typeRoots": ["types", "node_modules/@types"]
   },
   "include": ["src", "types", "scripts"],
