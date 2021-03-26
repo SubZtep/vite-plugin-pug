@@ -1,9 +1,9 @@
-import chalk from "chalk";
-import { compileFile } from "pug";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import { readFile } from "node:fs/promises";
-import { composeTemplate } from "./transformer.js";
+import { composeTemplate, injectScript } from "./transformer.js";
+import { hotUpdate } from "./hot-update.js";
+import { cacheVersion } from "./cache.js";
 export default (options, locals) => {
     const virtualFileId = "@pug-updater";
     let hotPugs;
@@ -11,48 +11,17 @@ export default (options, locals) => {
         name: "vite-plugin-pug",
         load(id) {
             if (id.endsWith(virtualFileId)) {
-                return readFile(fileURLToPath(join(dirname(import.meta.url), "hot.client.js")), { encoding: "utf8" });
+                const jsPath = fileURLToPath(join(dirname(import.meta.url), "hot.client.js"));
+                return readFile(jsPath, { encoding: "utf8" });
             }
         },
-        handleHotUpdate({ file, server }) {
-            if (file.startsWith(server.config.root) && file.endsWith(".pug")) {
-                const hotFile = file.slice(server.config.root.length).replace(/^\//, "");
-                const data = hotPugs
-                    .filter(({ main, dependencies }) => [main, ...dependencies].includes(hotFile))
-                    .map(hot => {
-                    console.log("CCC", hot);
-                    return hot;
-                })
-                    .map(({ main, query }) => [compileFile(main, options)(locals), query]);
-                if (data.length === 0) {
-                    server.config.logger.info(chalk `{redBright Pug’s Not Hot:} {cyan ${hotFile}}`);
-                    server.ws.send({
-                        type: "full-reload",
-                    });
-                    return;
-                }
-                server.config.logger.info(chalk `{greenBright Hot Pug:} {cyan ${hotFile}}`);
-                server.ws.send({
-                    type: "custom",
-                    event: "pug-update",
-                    data,
-                });
-                return [];
-            }
-        },
+        handleHotUpdate: hotUpdate(hotPugs, options, locals),
         transformIndexHtml: {
             transform(html) {
-                const [puglessHtml, hots] = composeTemplate(html, options, locals);
-                if (hots.length === 0) {
-                    return puglessHtml;
-                }
-                hotPugs = hots;
-                const script = `<script type="module" src="${virtualFileId}"></script>`;
-                const pos = puglessHtml.indexOf("</head>");
-                if (pos === -1) {
-                    return puglessHtml + script;
-                }
-                return [puglessHtml.slice(0, pos), script, puglessHtml.slice(pos)].join("");
+                let puglessHtml;
+                [hotPugs, puglessHtml] = composeTemplate(html, options, locals);
+                hotPugs.forEach(cacheVersion);
+                return injectScript(hotPugs, puglessHtml, virtualFileId);
             },
         },
     };

@@ -12,8 +12,9 @@
     "typecheck": "tsc --noEmit",
     "forest": "node --loader ts-node/esm.mjs scripts/forest.ts",
     "build": "tsc -p ./tsconfig.build.json",
+    "watch": "node --experimental-json-modules scripts/watcher.js",
     "wipe": "bash scripts/wipe.sh",
-    "test": "jest"
+    "test": "cross-env NODE_OPTIONS=--experimental-json-modules npx jest"
   },
   "repository": {
     "type": "git",
@@ -36,9 +37,10 @@
     "pug": "^3.0.2"
   },
   "devDependencies": {
-    "@types/jest": "^26.0.21",
-    "@types/node": "^14.14.35",
+    "@types/jest": "^26.0.22",
+    "@types/node": "^14.14.36",
     "@types/pug": "^2.0.4",
+    "cross-env": "^7.0.3",
     "fs-extra": "^9.1.0",
     "jest": "^26.6.3",
     "ts-jest": "^26.5.4",

@@ -6,12 +6,15 @@ A plugin that makes [Vite](https://vitejs.dev/) parse `<pug file="example.pug"><
 
 > :information_source: **Vue** single file components don't require this plugin, adding [Pug](https://www.npmjs.com/package/pug) to the dependency list is enough. — aka `npm i -D pug`
 
-- ES module.
-- Handle self-closing tags.
-- Works with multiple `pug` tags.
-- Generated _TypeScript_ declarations.
-- Reload when saving changes on a `.pug` file.
-- Experimental **hot module reloading** functionality.
+## Features (exists and awaiting)
+
+- [x] Native ES module, _vite_ doesn't need to convert.
+- [x] Handle self-closing `pug` tags.
+- [x] Works with multiple `pug` tags.
+- [x] Generated _TypeScript_ declarations.
+- [x] Reload when saving changes on a `.pug` file.
+- [x] Experimental **hot module reloading** functionality.
+- [ ] Handle adding or removing files.
 
 ## Installation
 

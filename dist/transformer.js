@@ -19,5 +19,16 @@ export const composeTemplate = (html, options, locals) => {
         }
         return compileFile(filename, options)(locals);
     });
-    return [parsed, hots];
+    return [hots, parsed];
+};
+export const injectScript = (hots, html, virtualFileId) => {
+    if (virtualFileId.length === 0 || hots.length === 0) {
+        return html;
+    }
+    const script = `<script type="module" src="${virtualFileId}"></script>`;
+    const pos = html.indexOf("</head>");
+    if (pos === -1) {
+        return html + script;
+    }
+    return [html.slice(0, pos), script, html.slice(pos)].join("");
 };
