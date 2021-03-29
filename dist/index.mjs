@@ -1,4 +1,4 @@
-"use strict";var __import_meta_url = typeof document === 'undefined' ? 'file://' + __filename : new URL('index.js', document.baseURI).href;Object.defineProperty(exports, "__esModule", {value: true});var __create = Object.create;
+var __create = Object.create;
 var __defProp = Object.defineProperty;
 var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
@@ -9094,14 +9094,14 @@ var require_pug_lexer = __commonJS((exports, module) => {
 });
 
 // src/index.ts
-var _url = require('url');
-var _path = require('path');
-var _promises = require('fs/promises');
+import {fileURLToPath} from "url";
+import {dirname, join as join2} from "path";
+import {readFile} from "fs/promises";
 
 // src/transformer.ts
-var _pug = require('pug');
-var _fs = require('fs');
-var _vite = require('vite');
+import {compileClientWithDependenciesTracked, compileFile} from "pug";
+import {readFileSync} from "fs";
+import {normalizePath} from "vite";
 var composeTemplate = (html, options, locals) => {
   const hots = [];
   const parsed = html.replace(/<pug.+?src="(.+?)".*?\/.*?>/gi, (tag, filename) => {
@@ -9111,13 +9111,13 @@ var composeTemplate = (html, options, locals) => {
         main: filename.replace(/^\/|\.\//, ""),
         query: um[1],
         dependencies: [
-          ...new Set(_pug.compileClientWithDependenciesTracked.call(void 0, _fs.readFileSync.call(void 0, filename).toString(), __assign(__assign({}, options), {
+          ...new Set(compileClientWithDependenciesTracked(readFileSync(filename).toString(), __assign(__assign({}, options), {
             filename
-          })).dependencies.map((fn) => _vite.normalizePath.call(void 0, fn)))
+          })).dependencies.map((fn) => normalizePath(fn)))
         ]
       });
     }
-    return _pug.compileFile.call(void 0, filename, options)(locals);
+    return compileFile(filename, options)(locals);
   });
   return [hots, parsed];
 };
@@ -9135,7 +9135,7 @@ var injectScript = (hots, html, virtualFileId) => {
 
 // src/hot-update.ts
 var import_chalk = __toModule(require_source());
-var _xtreediffplus = require('@dovyih/x-tree-diff-plus');
+import {EditOption} from "@dovyih/x-tree-diff-plus";
 
 // src/cache.ts
 var cache = new Map();
@@ -9143,12 +9143,12 @@ var cache = new Map();
 // src/diff.ts
 var import_pug_parser = __toModule(require_pug_parser());
 var import_pug_lexer = __toModule(require_pug_lexer());
-
-
-
+import {XTreeDiffPlus, XTree, NodeType} from "@dovyih/x-tree-diff-plus";
+import {readFileSync as readFileSync2} from "fs";
+import {join} from "path";
 var toAst = (filename, cwd = process.cwd()) => {
-  const path = _path.join.call(void 0, cwd, filename);
-  const src = _fs.readFileSync.call(void 0, path).toString();
+  const path = join(cwd, filename);
+  const src = readFileSync2(path).toString();
   const tokens = (0, import_pug_lexer.default)(src, {filename: path});
   return (0, import_pug_parser.default)(tokens, {filename: path, src});
 };
@@ -9189,8 +9189,8 @@ var serializeNode = (node) => {
 var astWalker = (nodes, depth = 0) => {
   const children = [];
   for (const [index, node] of nodes.filter((node2) => node2.type === "Tag").entries()) {
-    const tree = new (0, _xtreediffplus.XTree)({
-      type: _xtreediffplus.NodeType.ELEMENT,
+    const tree = new XTree({
+      type: NodeType.ELEMENT,
       label: serializeNode(node),
       data: node,
       index
@@ -9200,7 +9200,7 @@ var astWalker = (nodes, depth = 0) => {
   }
   return children;
 };
-var PugAstDiff = class extends _xtreediffplus.XTreeDiffPlus {
+var PugAstDiff = class extends XTreeDiffPlus {
   buildXTree(ast) {
     return astWalker(ast.nodes)[0];
   }
@@ -9230,7 +9230,7 @@ var hotUpdate = ({file, server}, hotPugs, options, locals) => {
       const del = [];
       const upd = [];
       const mov = [];
-      for (const node of diffWalker(oldTree, [_xtreediffplus.EditOption.DEL])) {
+      for (const node of diffWalker(oldTree, [EditOption.DEL])) {
         del.push({
           name: node.data.name,
           attrs: node.data.attrs.map(({name, val}) => [name, dequoter(val)]),
@@ -9238,24 +9238,24 @@ var hotUpdate = ({file, server}, hotPugs, options, locals) => {
         });
       }
       console.log(newTree);
-      for (const node of diffWalker(newTree, [_xtreediffplus.EditOption.INS, _xtreediffplus.EditOption.UPD, _xtreediffplus.EditOption.MOV])) {
+      for (const node of diffWalker(newTree, [EditOption.INS, EditOption.UPD, EditOption.MOV])) {
         console.log("ZZ", node.Op);
         switch (node.Op) {
-          case _xtreediffplus.EditOption.INS:
+          case EditOption.INS:
             ins.push({
               name: node.data.name,
               attrs: node.data.attrs.map(({name, val}) => [name, dequoter(val)]),
               indices: treeIndices(node)
             });
             break;
-          case _xtreediffplus.EditOption.UPD:
+          case EditOption.UPD:
             upd.push({
               name: node.data.name,
               attrs: node.data.attrs.map(({name, val}) => [name, dequoter(val)]),
               indices: treeIndices(node)
             });
             break;
-          case _xtreediffplus.EditOption.MOV:
+          case EditOption.MOV:
             mov.push({
               name: node.data.name,
               attrs: node.data.attrs.map(({name, val}) => [name, dequoter(val)]),
@@ -9284,8 +9284,8 @@ var src_default = (options, locals) => {
     name: "vite-plugin-pug",
     load(id) {
       if (id.endsWith(virtualFileId)) {
-        const jsPath = _url.fileURLToPath.call(void 0, _path.join.call(void 0, _path.dirname.call(void 0, __import_meta_url), "hot.client.js"));
-        return _promises.readFile.call(void 0, jsPath, {encoding: "utf8"});
+        const jsPath = fileURLToPath(join2(dirname(import.meta.url), "hot.client.js"));
+        return readFile(jsPath, {encoding: "utf8"});
       }
     },
     handleHotUpdate(ctx) {
@@ -9304,6 +9304,6 @@ var src_default = (options, locals) => {
     }
   };
 };
-
-
-exports.default = src_default;
+export {
+  src_default as default
+};

@@ -36,16 +36,16 @@ const options = { pretty: true }
 const locals = { name: "My Pug" }
 
 export default defineConfig({
-  plugins: [pugPlugin(options, locals)]
+  plugins: [pugPlugin(options, locals)],
 })
 ```
 
 ### Plugin Parameters
 
-| Key | Required | Description                   |
-| --- | ------- | ----------------------------- |
-| options | optional    | [Pug options](https://pugjs.org/api/reference.html#options) object |
-| locals | optional    | Pug locals |
+| Key     | Required | Description                                                        |
+| ------- | -------- | ------------------------------------------------------------------ |
+| options | optional | [Pug options](https://pugjs.org/api/reference.html#options) object |
+| locals  | optional | Pug locals                                                         |
 
 ## Usage
 
@@ -59,13 +59,13 @@ h1 Hello World
 p I'm a cool Vite project!
 ```
 
-Embed `pug` tag with `file` attribute somewhere.
+Embed `pug` tag with `src` attribute somewhere.
 
 ```html
 <!-- index.html -->
 <html>
   <body>
-    <pug file="index.pug" />
+    <pug src="index.pug" />
     <script type="module" src="/main.ts"></script>
   </body>
 </html>
@@ -108,7 +108,8 @@ If it doesn't match with your setup please [start a new discussion](https://gith
 
 ### Third Party
 
-| Name                                                                   | License                                                       | Description             |
-| ---------------------------------------------------------------------- | ------------------------------------------------------------- | ----------------------- |
-| [@dovyih/x-tree-diff-plus](https://github.com/yidafu/x-tree-diff-plus) | [MPL-2.0](https://github.com/yidafu/x-tree-diff-plus/LICENSE) | Diff ASTs               |
-| [pug](https://github.com/pugjs/pug)                                    | [MIT](https://github.com/pugjs/pug#license)                   | Pug to AST, Pug to HTML |
+| Name                                                                   | License                                                                   | Description                         |
+| ---------------------------------------------------------------------- | ------------------------------------------------------------------------- | ----------------------------------- |
+| [@dovyih/x-tree-diff-plus](https://github.com/yidafu/x-tree-diff-plus) | [MPL-2.0](https://github.com/yidafu/x-tree-diff-plus/blob/master/LICENSE) | Difference ASTs.                    |
+| [pug](https://github.com/pugjs/pug)                                    | [MIT](https://github.com/pugjs/pug#license)                               | Pug to AST, Pug to HTML.            |
+| [uuid](https://github.com/uuidjs/uuid)                                 | [MIT](https://github.com/uuidjs/uuid/blob/master/LICENSE.md)              | Generate identifier for hot update. |

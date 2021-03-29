@@ -5,7 +5,8 @@ import type { Plugin } from "vite"
 import type { Options, LocalsObject } from "pug"
 import { composeTemplate, injectScript } from "./transformer.js"
 import { hotUpdate } from "./hot-update.js"
-import { cacheVersion } from "./cache.js"
+import { cache } from "./cache.js"
+import { toAst } from "./diff.js"
 
 export default (options?: Options, locals?: LocalsObject): Plugin => {
   const virtualFileId = "@pug-updater"
@@ -22,13 +23,18 @@ export default (options?: Options, locals?: LocalsObject): Plugin => {
       }
     },
 
-    handleHotUpdate: hotUpdate(hotPugs, options, locals),
+    handleHotUpdate(ctx) {
+      if (hotPugs && hotPugs.length > 0) {
+        return hotUpdate(ctx, hotPugs, options, locals)
+      }
+    },
 
     transformIndexHtml: {
       transform(html) {
         let puglessHtml: string
         ;[hotPugs, puglessHtml] = composeTemplate(html, options, locals)
-        hotPugs.forEach(cacheVersion)
+        console.log("xxsxxdssasxxxxxz")
+        hotPugs.forEach(({ main }) => cache.set(main, toAst(main)))
         return injectScript(hotPugs, puglessHtml, virtualFileId)
       },
     },

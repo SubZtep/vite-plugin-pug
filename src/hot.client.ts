@@ -56,5 +56,13 @@ if (import.meta.hot) {
     }
   }
 
-  import.meta.hot!.on("pug-update", data => data.forEach(updater))
+  import.meta.hot!.on("pug-update", data => {
+    console.log(data)
+    // data.forEach(dat => {
+    //   console.log({ dat })
+    // })
+    // data.forEach(({ del }, query) => {
+    //   console.log({ del, query })
+    // })
+  })
 }

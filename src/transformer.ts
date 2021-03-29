@@ -5,7 +5,7 @@ import { normalizePath } from "vite"
 
 export const composeTemplate = (html: string, options?: Options, locals?: LocalsObject): [HotPug[], string] => {
   const hots: HotPug[] = []
-  const parsed = html.replace(/<pug.+?file="(.+?)".*?\/.*?>/gi, (tag: string, filename: string) => {
+  const parsed = html.replace(/<pug.+?src="(.+?)".*?\/.*?>/gi, (tag: string, filename: string) => {
     const um = tag.match(/update=['"]{1}(.+?)['"]{1}/i)
     if (um !== null) {
       hots.push({

@@ -19,6 +19,3 @@ interface Settings {
 //  * Function that replace `<pug>` tag to parsed HTML.
 //  */
 //  type TagReplacer = (tag: string, filename: string) => string
-
-type HotUpdateCurrying = (ctx: HmrContext) => void
-type HotUpdate = (hotPugs?: HotPug[], options?: Options, locals?: LocalsObject) => HotUpdateCurrying

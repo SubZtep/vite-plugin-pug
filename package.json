@@ -2,17 +2,17 @@
   "name": "vite-plugin-pug",
   "version": "0.2.0",
   "description": "Vite plugin for transform Pug templates into HTML",
-  "type": "module",
   "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
   "scripts": {
-    "dev": "node --experimental-json-modules scripts/watcher.js",
+    "dev": "npm run build -- --watch",
     "typecheck": "tsc --noEmit",
     "forest": "node --loader ts-node/esm.mjs scripts/forest.ts",
-    "build": "tsc -p ./tsconfig.build.json",
-    "watch": "node --experimental-json-modules scripts/watcher.js",
+    "build": "tsup src/index.ts --dts --format cjs,esm",
     "wipe": "bash scripts/wipe.sh",
     "test": "cross-env NODE_OPTIONS=--experimental-json-modules npx jest"
   },
@@ -21,7 +21,6 @@
     "url": "git+https://github.com/SubZtep/vite-plugin-pug.git"
   },
   "keywords": [
-    "vite",
     "vite-plugin",
     "pug",
     "jade"
@@ -38,14 +37,14 @@
   },
   "devDependencies": {
     "@types/jest": "^26.0.22",
-    "@types/node": "^14.14.36",
+    "@types/node": "^14.14.37",
     "@types/pug": "^2.0.4",
-    "cross-env": "^7.0.3",
-    "fs-extra": "^9.1.0",
     "jest": "^26.6.3",
     "ts-jest": "^26.5.4",
     "ts-node": "^9.1.1",
-    "typescript": "^4.2.3"
+    "tsup": "^4.8.21",
+    "typescript": "^4.2.3",
+    "vite": "^2.1.3"
   },
   "peerDependencies": {
     "vite": "~2"
