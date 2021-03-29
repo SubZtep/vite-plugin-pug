@@ -16,8 +16,8 @@ export const treeIndices = (node: XTree<Pug.Node>) => {
   const indices: number[] = []
 
   const rfx = (node: XTree<Pug.Node>) => {
+    indices.push(node.index)
     if (node.pPtr) {
-      indices.push(node.pPtr.index)
       rfx(node.pPtr)
     }
   }
@@ -27,12 +27,20 @@ export const treeIndices = (node: XTree<Pug.Node>) => {
 }
 
 export function* diffWalker(node: XTree<Pug.Node>, filter: EditOption[]): Generator<XTree<Pug.Node>> {
+  if (!node) {
+    // throw Error(`wtf ${JSON.stringify({ node, filter })}`)
+    return
+  }
+
   if (filter.includes(node.Op!)) {
     yield node
   }
-  // @ts-ignore
-  for (const child of node.children) {
+
+  let i = 0
+  let child = node.getChild(i++)
+  while (child) {
     yield* diffWalker(child, filter)
+    child = node.getChild(i++)
   }
 }
 
@@ -58,7 +66,7 @@ const serializeNode = (node: Pug.Node) => {
   ].join("|")
 }
 
-const astWalker = (nodes: Pug.Node[], depth = 0): XTree<Pug.Node>[] => {
+const astToXTree = (nodes: Pug.Node[] = [], depth = 0): XTree<Pug.Node>[] => {
   const children: XTree[] = []
   for (const [index, node] of nodes.filter(node => node.type === "Tag").entries()) {
     const tree = new XTree<Pug.Node>({
@@ -67,7 +75,7 @@ const astWalker = (nodes: Pug.Node[], depth = 0): XTree<Pug.Node>[] => {
       data: node,
       index,
     })
-    tree.append(astWalker(node.block.nodes, depth + 1))
+    tree.append(astToXTree(node.block.nodes, depth + 1))
     children.push(tree)
   }
   return children
@@ -75,10 +83,13 @@ const astWalker = (nodes: Pug.Node[], depth = 0): XTree<Pug.Node>[] => {
 
 export class PugAstDiff extends XTreeDiffPlus<Pug.Block, Pug.Node> {
   public buildXTree(ast: Pug.Block) {
-    return astWalker(ast.nodes)![0]
+    return astToXTree(ast.nodes)![0]
   }
 
-  public dumpXTree(oldTree: XTree<Pug.Node>, newTree: XTree<Pug.Node>) {
+  public dumpXTree(
+    oldTree: XTree<Pug.Node>,
+    newTree: XTree<Pug.Node>
+  ): { oldTree: XTree<Pug.Node>; newTree: XTree<Pug.Node> } {
     return { oldTree, newTree }
   }
 }

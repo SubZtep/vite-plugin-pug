@@ -1,21 +1,21 @@
-/**
- * main: path and filename without leading `./`
- * query: Media query
- */
 interface HotPug {
+  /** Root pug path (without leading `./`). */
   main: string
-  query: string
+
+  /** Media query for the wrapper element. */
+  container: string
+
+  /** List of included pug paths. */
   dependencies: string[]
 }
 
-/**
- * Plugin settings
- */
-interface Settings {
-  // hot: boolean
-}
+interface HotData {
+  /** Tag name. */
+  name: string
 
-// /**
-//  * Function that replace `<pug>` tag to parsed HTML.
-//  */
-//  type TagReplacer = (tag: string, filename: string) => string
+  /** New attribute name and value pairs. */
+  attrs: [string, string][]
+
+  /** Child indices from container to element. */
+  indices: number[]
+}

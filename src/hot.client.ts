@@ -1,68 +1,36 @@
 if (import.meta.hot) {
-  const bannedTags = ["canvas", "div"]
-  const bannedAttributes = ["aframe-injected"]
+  const upd = (container: HTMLElement) => (data: HotData) => {
+    const el = getHotElement(container, data.indices)
+    data.attrs
+      .filter(([name, value]) => el.getAttribute(name) !== value)
+      .forEach(([name, value]) => el.setAttribute(name, value))
 
-  let domNode
-  let domWalker
-  let pugNode
-  let pugWalker
-  let pugDocument
-  const parser = new DOMParser()
+    const currNames = data.attrs.map(([name]) => name)
+    el.getAttributeNames()
+      .filter(name => !currNames.includes(name))
+      // A-Frame's habbit to add object mandatory attributes (eg: material, geometry)
+      .filter(name => el.getAttribute(name) === "object")
+      .forEach(name => el.removeAttribute(name))
 
-  const acceptNode = node =>
-    NodeFilter.FILTER_ACCEPT &&
-    !bannedTags.includes(node.nodeName.toLowerCase()) &&
-    ![...node.attributes].some(({ name }) => bannedAttributes.includes(name))
-
-  const walkerParams = [NodeFilter.SHOW_ELEMENT, { acceptNode }, false]
-
-  const attributesInUse = node =>
-    Object.fromEntries([...node.attributes].filter(({ value }) => value).map(({ name, value }) => [name, value]))
-
-  const updateNode = (referenceNode, mutatableNode) => {
-    const refAttrs = attributesInUse(referenceNode)
-    const mutAttrs = attributesInUse(mutatableNode)
-    const refKeys = Object.keys(refAttrs)
-    const mutKeys = Object.keys(mutAttrs)
-
-    const intersection = refKeys.filter(key => mutKeys.includes(key))
-    const add = refKeys.filter(key => !mutKeys.includes(key))
-    const del = mutKeys.filter(key => !refKeys.includes(key))
-
-    del.forEach(key => mutatableNode.removeAttribute(key))
-    add.forEach(key => mutatableNode.setAttribute(key, refAttrs[key]))
-    intersection.forEach(key => {
-      if (mutAttrs[key] !== refAttrs[key]) {
-        mutatableNode.setAttribute(key, refAttrs[key])
-      }
-    })
+    // TODO: check if (tag) name changed
   }
 
-  const updater = ([html, query]) => {
-    pugDocument = parser.parseFromString(html, "text/html")
-
-    // @ts-ignore
-    domWalker = document.createTreeWalker(document.querySelector(query), ...walkerParams)
-    pugWalker = pugDocument.createTreeWalker(pugDocument.body, ...walkerParams)
-
-    domNode = domWalker.nextNode()
-    pugNode = pugWalker.nextNode()
-
-    while (domNode && pugNode) {
-      updateNode(pugNode, domNode)
-
-      domNode = domWalker.nextNode()
-      pugNode = pugWalker.nextNode()
+  const getHotElement = (wrapper: HTMLElement, indices: number[]): HTMLElement => {
+    const index = indices.slice(0, 1)[0]
+    const el = wrapper.children.item(index) as HTMLElement
+    if (indices.length > 1) {
+      return getHotElement(el, indices.slice(1))
     }
+    return el
   }
 
-  import.meta.hot!.on("pug-update", data => {
-    console.log(data)
-    // data.forEach(dat => {
-    //   console.log({ dat })
-    // })
-    // data.forEach(({ del }, query) => {
-    //   console.log({ del, query })
-    // })
+  import.meta.hot!.on("pug-update", ([data]) => {
+    // console.log("CLIENT PUG UPDATE", data)
+    const container = document.querySelector(data.container) as HTMLElement
+
+    data.upd.forEach(upd(container))
+    //TODO: mov
+    //TODO: ins
+    //TODO: del
   })
 }

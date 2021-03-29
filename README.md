@@ -77,14 +77,14 @@ That's it.
 
 ### Hot Reload
 
-Adding `update` attibute to a `pug` tag start hot reloading, the value is a media query string for the wrapper element.
+Adding `container` attibute to a `pug` tag start hot reloading, the value is a media query string for the wrapper element.
 
 ```html
 <!-- index.html -->
 <html>
   <head>
     <script type="text/html">
-      <pug file="./src/main.pug" update="#main" />
+      <pug file="./src/main.pug" container="#main" />
     </script>
   </head>
   <body>

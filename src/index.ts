@@ -15,7 +15,6 @@ export default (options?: Options, locals?: LocalsObject): Plugin => {
   return {
     name: "vite-plugin-pug",
 
-    /** Inject `hot.client.js` change listener content to the browser page */
     load(id) {
       if (id.endsWith(virtualFileId)) {
         const jsPath = fileURLToPath(join(dirname(import.meta.url), "hot.client.js"))
@@ -25,7 +24,7 @@ export default (options?: Options, locals?: LocalsObject): Plugin => {
 
     handleHotUpdate(ctx) {
       if (hotPugs && hotPugs.length > 0) {
-        return hotUpdate(ctx, hotPugs, options, locals)
+        return hotUpdate(ctx, hotPugs)
       }
     },
 
@@ -33,7 +32,6 @@ export default (options?: Options, locals?: LocalsObject): Plugin => {
       transform(html) {
         let puglessHtml: string
         ;[hotPugs, puglessHtml] = composeTemplate(html, options, locals)
-        console.log("xxsxxdssasxxxxxz")
         hotPugs.forEach(({ main }) => cache.set(main, toAst(main)))
         return injectScript(hotPugs, puglessHtml, virtualFileId)
       },

@@ -6,11 +6,11 @@ import { normalizePath } from "vite"
 export const composeTemplate = (html: string, options?: Options, locals?: LocalsObject): [HotPug[], string] => {
   const hots: HotPug[] = []
   const parsed = html.replace(/<pug.+?src="(.+?)".*?\/.*?>/gi, (tag: string, filename: string) => {
-    const um = tag.match(/update=['"]{1}(.+?)['"]{1}/i)
+    const um = tag.match(/container=['"]{1}(.+?)['"]{1}/i)
     if (um !== null) {
       hots.push({
         main: filename.replace(/^\/|\.\//, ""),
-        query: um[1],
+        container: um[1],
         dependencies: [
           ...new Set<string>(
             compileClientWithDependenciesTracked(readFileSync(filename).toString(), {

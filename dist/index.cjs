@@ -1,4 +1,4 @@
-var __create = Object.create;
+"use strict";var __import_meta_url = typeof document === 'undefined' ? 'file://' + __filename : new URL('index.cjs', document.baseURI).href;Object.defineProperty(exports, "__esModule", {value: true});var __create = Object.create;
 var __defProp = Object.defineProperty;
 var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
@@ -9094,30 +9094,30 @@ var require_pug_lexer = __commonJS((exports, module) => {
 });
 
 // src/index.ts
-import {fileURLToPath} from "url";
-import {dirname, join as join2} from "path";
-import {readFile} from "fs/promises";
+var _url = require('url');
+var _path = require('path');
+var _promises = require('fs/promises');
 
 // src/transformer.ts
-import {compileClientWithDependenciesTracked, compileFile} from "pug";
-import {readFileSync} from "fs";
-import {normalizePath} from "vite";
+var _pug = require('pug');
+var _fs = require('fs');
+var _vite = require('vite');
 var composeTemplate = (html, options, locals) => {
   const hots = [];
   const parsed = html.replace(/<pug.+?src="(.+?)".*?\/.*?>/gi, (tag, filename) => {
-    const um = tag.match(/update=['"]{1}(.+?)['"]{1}/i);
+    const um = tag.match(/container=['"]{1}(.+?)['"]{1}/i);
     if (um !== null) {
       hots.push({
         main: filename.replace(/^\/|\.\//, ""),
-        query: um[1],
+        container: um[1],
         dependencies: [
-          ...new Set(compileClientWithDependenciesTracked(readFileSync(filename).toString(), __assign(__assign({}, options), {
+          ...new Set(_pug.compileClientWithDependenciesTracked.call(void 0, _fs.readFileSync.call(void 0, filename).toString(), __assign(__assign({}, options), {
             filename
-          })).dependencies.map((fn) => normalizePath(fn)))
+          })).dependencies.map((fn) => _vite.normalizePath.call(void 0, fn)))
         ]
       });
     }
-    return compileFile(filename, options)(locals);
+    return _pug.compileFile.call(void 0, filename, options)(locals);
   });
   return [hots, parsed];
 };
@@ -9135,7 +9135,7 @@ var injectScript = (hots, html, virtualFileId) => {
 
 // src/hot-update.ts
 var import_chalk = __toModule(require_source());
-import {EditOption} from "@dovyih/x-tree-diff-plus";
+var _xtreediffplus = require('@dovyih/x-tree-diff-plus');
 
 // src/cache.ts
 var cache = new Map();
@@ -9143,20 +9143,20 @@ var cache = new Map();
 // src/diff.ts
 var import_pug_parser = __toModule(require_pug_parser());
 var import_pug_lexer = __toModule(require_pug_lexer());
-import {XTreeDiffPlus, XTree, NodeType} from "@dovyih/x-tree-diff-plus";
-import {readFileSync as readFileSync2} from "fs";
-import {join} from "path";
+
+
+
 var toAst = (filename, cwd = process.cwd()) => {
-  const path = join(cwd, filename);
-  const src = readFileSync2(path).toString();
+  const path = _path.join.call(void 0, cwd, filename);
+  const src = _fs.readFileSync.call(void 0, path).toString();
   const tokens = (0, import_pug_lexer.default)(src, {filename: path});
   return (0, import_pug_parser.default)(tokens, {filename: path, src});
 };
 var treeIndices = (node) => {
   const indices = [];
   const rfx = (node2) => {
+    indices.push(node2.index);
     if (node2.pPtr) {
-      indices.push(node2.pPtr.index);
       rfx(node2.pPtr);
     }
   };
@@ -9164,11 +9164,17 @@ var treeIndices = (node) => {
   return indices.reverse();
 };
 function* diffWalker(node, filter) {
+  if (!node) {
+    return;
+  }
   if (filter.includes(node.Op)) {
     yield node;
   }
-  for (const child of node.children) {
+  let i = 0;
+  let child = node.getChild(i++);
+  while (child) {
     yield* diffWalker(child, filter);
+    child = node.getChild(i++);
   }
 }
 var dequoter = (str) => str.replaceAll(/^['"]|['"]$/g, "");
@@ -9186,23 +9192,23 @@ var serializeNode = (node) => {
     Array.from(attrs.keys()).sort().map((name) => `${name}=${attrs.get(name)}`).join(",")
   ].join("|");
 };
-var astWalker = (nodes, depth = 0) => {
+var astToXTree = (nodes = [], depth = 0) => {
   const children = [];
   for (const [index, node] of nodes.filter((node2) => node2.type === "Tag").entries()) {
-    const tree = new XTree({
-      type: NodeType.ELEMENT,
+    const tree = new (0, _xtreediffplus.XTree)({
+      type: _xtreediffplus.NodeType.ELEMENT,
       label: serializeNode(node),
       data: node,
       index
     });
-    tree.append(astWalker(node.block.nodes, depth + 1));
+    tree.append(astToXTree(node.block.nodes, depth + 1));
     children.push(tree);
   }
   return children;
 };
-var PugAstDiff = class extends XTreeDiffPlus {
+var PugAstDiff = class extends _xtreediffplus.XTreeDiffPlus {
   buildXTree(ast) {
-    return astWalker(ast.nodes)[0];
+    return astToXTree(ast.nodes)[0];
   }
   dumpXTree(oldTree, newTree) {
     return {oldTree, newTree};
@@ -9210,7 +9216,7 @@ var PugAstDiff = class extends XTreeDiffPlus {
 };
 
 // src/hot-update.ts
-var hotUpdate = ({file, server}, hotPugs, options, locals) => {
+var hotUpdate = ({file, server}, hotPugs) => {
   if (file.startsWith(server.config.root) && file.endsWith(".pug")) {
     const normFile = file.slice(server.config.root.length).replace(/^\//, "");
     const watchedHotPugs = hotPugs.filter(({main, dependencies}) => [main, ...dependencies].includes(normFile));
@@ -9225,37 +9231,34 @@ var hotUpdate = ({file, server}, hotPugs, options, locals) => {
       const oldAst = cache.get(hot.main);
       const newAst = toAst(hot.main);
       const {oldTree, newTree} = new PugAstDiff(oldAst, newAst).diff();
-      console.dir({oldAst, newAst}, {depth: 10});
       const ins = [];
       const del = [];
       const upd = [];
       const mov = [];
-      for (const node of diffWalker(oldTree, [EditOption.DEL])) {
+      for (const node of diffWalker(oldTree, [_xtreediffplus.EditOption.DEL])) {
         del.push({
           name: node.data.name,
           attrs: node.data.attrs.map(({name, val}) => [name, dequoter(val)]),
           indices: treeIndices(node)
         });
       }
-      console.log(newTree);
-      for (const node of diffWalker(newTree, [EditOption.INS, EditOption.UPD, EditOption.MOV])) {
-        console.log("ZZ", node.Op);
+      for (const node of diffWalker(newTree, [_xtreediffplus.EditOption.INS, _xtreediffplus.EditOption.UPD, _xtreediffplus.EditOption.MOV])) {
         switch (node.Op) {
-          case EditOption.INS:
+          case _xtreediffplus.EditOption.INS:
             ins.push({
               name: node.data.name,
               attrs: node.data.attrs.map(({name, val}) => [name, dequoter(val)]),
               indices: treeIndices(node)
             });
             break;
-          case EditOption.UPD:
+          case _xtreediffplus.EditOption.UPD:
             upd.push({
               name: node.data.name,
               attrs: node.data.attrs.map(({name, val}) => [name, dequoter(val)]),
               indices: treeIndices(node)
             });
             break;
-          case EditOption.MOV:
+          case _xtreediffplus.EditOption.MOV:
             mov.push({
               name: node.data.name,
               attrs: node.data.attrs.map(({name, val}) => [name, dequoter(val)]),
@@ -9264,7 +9267,7 @@ var hotUpdate = ({file, server}, hotPugs, options, locals) => {
             break;
         }
       }
-      return {del, ins, upd, mov, query: hot.query};
+      return {del, ins, upd, mov, container: hot.container};
     });
     server.config.logger.info(import_chalk.default`{greenBright Hot Pug:} {cyan ${normFile}}`);
     server.ws.send({
@@ -9284,26 +9287,25 @@ var src_default = (options, locals) => {
     name: "vite-plugin-pug",
     load(id) {
       if (id.endsWith(virtualFileId)) {
-        const jsPath = fileURLToPath(join2(dirname(import.meta.url), "hot.client.js"));
-        return readFile(jsPath, {encoding: "utf8"});
+        const jsPath = _url.fileURLToPath.call(void 0, _path.join.call(void 0, _path.dirname.call(void 0, __import_meta_url), "hot.client.js"));
+        return _promises.readFile.call(void 0, jsPath, {encoding: "utf8"});
       }
     },
     handleHotUpdate(ctx) {
       if (hotPugs && hotPugs.length > 0) {
-        return hotUpdate(ctx, hotPugs, options, locals);
+        return hotUpdate(ctx, hotPugs);
       }
     },
     transformIndexHtml: {
       transform(html) {
         let puglessHtml;
         [hotPugs, puglessHtml] = composeTemplate(html, options, locals);
-        console.log("xxsxxdssasxxxxxz");
         hotPugs.forEach(({main}) => cache.set(main, toAst(main)));
         return injectScript(hotPugs, puglessHtml, virtualFileId);
       }
     }
   };
 };
-export {
-  src_default as default
-};
+
+
+exports.default = src_default;
