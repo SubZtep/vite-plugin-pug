@@ -1,14 +1,17 @@
 {
   "name": "vite-plugin-pug",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Vite plugin for transform Pug templates into HTML",
   "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
   "scripts": {
-    "dev": "tsc -w -p .",
-    "build": "rm -rf dist && tsc -p .",
+    "dev": "npm run build -- --watch",
+    "build": "tsup src/index.ts --dts --format cjs,esm",
+    "typecheck": "tsc --noEmit",
     "test": "jest"
   },
   "repository": {
@@ -27,16 +30,19 @@
     "url": "https://github.com/SubZtep/vite-plugin-pug/issues"
   },
   "homepage": "https://github.com/SubZtep/vite-plugin-pug#readme",
-  "peerDependencies": {
-    "vite": "~2.0.0"
+  "dependencies": {
+    "pug": "^3.0.2"
   },
   "devDependencies": {
+    "@types/jest": "^26.0.22",
     "@types/pug": "^2.0.4",
     "jest": "^26.6.3",
-    "ts-jest": "^26.5.1",
-    "typescript": "^4.1.5"
+    "ts-jest": "^26.5.5",
+    "tsup": "^4.9.1",
+    "typescript": "^4.2.4",
+    "vite": "^2.2.1"
   },
-  "dependencies": {
-    "pug": "^3.0.0"
+  "peerDependencies": {
+    "vite": "~2"
   }
 }
