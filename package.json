@@ -10,7 +10,6 @@
   "scripts": {
     "dev": "npm run build -- --watch",
     "build": "tsup src/index.ts --dts --format cjs,esm --no-splitting",
-    "postinstall": "npx mkdirp dist && cp src/*.d.ts dist || copy src/*.d.ts dist",
     "typecheck": "tsc --noEmit",
     "test": "jest"
   },

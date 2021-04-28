@@ -1,7 +1,8 @@
-import type { Options, LocalsObject } from "pug"
 import type { Logger, Plugin } from "vite"
+import type { Options, LocalsObject } from "pug"
+import { readdir, stat, readFile } from "fs/promises"
 import { compileFile } from "pug"
-import { resolve } from "path"
+import { join } from "path"
 import chalk from "chalk"
 
 export function pugs(html: string, pugger: (filename: string) => string, logger?: Pick<Logger, "warn">) {
@@ -15,126 +16,56 @@ export function pugs(html: string, pugger: (filename: string) => string, logger?
   })
 }
 
-export default function (options?: Options, locals?: LocalsObject): Plugin {
-  const virtualPugId = "@pug"
+interface PluginOptions {
+  /** Generate HTML pages based on the structure. */
+  multiRoot?: string
+}
 
-  return {
+export default function (options?: PluginOptions & Options, locals?: LocalsObject): Plugin {
+  // function dirWalker(dir: string) {
+  //   readdirSync(dir).forEach(file => {
+  //     let filepath = join(dir, file)
+  //     let stat = statSync(filepath)
+  //     if (stat.isDirectory()) {
+  //       dirWalker(filepath)
+  //     } else {
+  //       console.info(filepath + "\n")
+  //     }
+  //   })
+  // }
+
+  const plugin: Plugin = {
     name: "vite-plugin-pug",
 
-    // transform(src, id) {
-    //   // console.log("TRANSFORM", [src, id])
-    //   console.log("TRANSFORM", [id])
+    // build: {
+    //   rollupOptions: {
+    //     input: resolve(__dirname, "index.html"),
+    //   },
+    // },
+
+    // renderChunk(code, chunkInfo, options) {
+    //   // DIST JS FILES
+    //   // console.log("RENDERCHUNK", chunkInfo.fileName)
+    //   console.log("RENDERCHUNK", code)
+    //   // if (ch)
+    //   return "XXX"
+    // },
+
+    // transform(code, id) {
+    //   if (id.endsWith(".html")) {
+    //     // console.log("TRANSFORM", code)
+    //     return "BOOOBOOBHTML"
+    //   }
     //   return undefined
     // },
 
-    // augmentChunkHash(c) {
-    //   if (c.facadeModuleId) {
-    //     console.log(c.facadeModuleId)
-    //   }
+    // generateBundle(options, bundle) {
+    //   this.emitFile({ type: "asset", fileName: "lolkabolka/index.html", source: "BROAFFFF" })
     // },
-
-    renderChunk(code, chunkInfo, options) {
-      // DIST JS FILES
-      // console.log("RENDERCHUNK", chunkInfo.fileName)
-      console.log("RENDERCHUNK", code)
-      // if (ch)
-      return "XXX"
-    },
-
-    transform(code, id) {
-      if (id.endsWith(".html")) {
-        // console.log("TRANSFORM", code)
-        return "BOOOBOOBHTML"
-      }
-      return undefined
-    },
-
-    // renderDynamicImport(x) {
-    //   console.log("RENDERDYNAMICIMPORT", x)
-    //   return "LLLLOOL"
-    // },
-
-    // emitFile(emittedFile) {
-    //   console.log("EMITFILE", emittedFile)
-    //   return "qwer"
-    // },
-
-    generateBundle(options, bundle) {
-      // console.log("GENERATEBUNDLE OPTIONS", options)
-      // console.log("GENERATEBUNDLE BUNDLE", bundle)
-
-      console.log(bundle)
-
-      // this.emitFile({ type: "asset", fileName: resolve(__dirname, "munkatarsak/peti/index.html"), source: "BROAFFFF" })
-
-
-      // this.emitFile = (emittedFile) {
-      //   console.log("EMITFILE", emittedFile)
-      //   return "qwer"
-      // }
-
-      this.emitFile({ type: "asset", fileName: "lolkabolka/index.html", source: "BROAFFFF" })
-
-      // Object.keys(bundle).forEach(filename => {
-      //   const chunk = bundle[filename] as any /*as PreRenderedChunk*/
-      //   let id = chunk.facadeModuleId
-      //   if (id?.startsWith("@") && id.endsWith(".html")) {
-      //     // this.emitFile({ type: "asset", fileName: id.slice(1), source: "BROAFFFF" })
-
-      //     // delete bundle[filename]
-
-      //     this.emitFile({ type: "asset", fileName: "lolkabolka/index.html", source: "BROAFFFF" })
-
-      //     // // chunk.modules[id.slice(1)] = { ...chunk.modules[id] }
-      //     // chunk.modules[id.slice(1)] = chunk.modules[id]
-      //     // chunk.modules[id.slice(1)].code = "QQQWWWQQQ"
-      //     // delete chunk.modules.id
-      //     // // id = id.slice(1)
-      //     // console.log("generatebundle", chunk.name)
-      //     // chunk.name = id.slice(1)
-      //   }
-      // })
-
-
-      // Object.keys(bundle).forEach(filename => {
-      //   console.log("GENERATEBUNDLE", filename)
-      //   // const b = bundle[filename]
-      //   // if (b.facadeModuleId?.endsWith(".html")) {
-      //   //   console.log(b.modules[b.facadeModuleId])
-      //   // }
-      // })
-    },
-
-    // writeBundle(options, bundle) {
-    //   Object.keys(bundle).filter(filename => filename.endsWith(".html")).forEach(filename => {
-    //     bundle[filename].source = "XXXYYYZZZ"
-    //   })
-    // },
-
-
-    resolveId(id) {
-      console.log("RESOLVEID", id)
-      if (id === virtualPugId) {
-        return virtualPugId
-      }
-
-      if (id.includes("lolkabolka")) {
-        return `@${id}`
-      }
-    },
 
     load(id) {
-      console.log("LOAD", id)
-      if (id === virtualPugId) {
-        return `export const locals = ${JSON.stringify(locals)}`
-      }
-
       if (id.endsWith(".pug.js")) {
         return `export const html = "${compileFile("." + id.slice(0, -3), options)(locals).replace('"', '\\"')}"`
-      }
-
-      if (id.startsWith("@") && id.endsWith(".html")) {
-        return "XXXXXXXXXX"
       }
     },
 
@@ -153,4 +84,32 @@ export default function (options?: Options, locals?: LocalsObject): Plugin {
       },
     },
   }
+
+  if (options?.multiRoot) {
+    const lastDir = options.multiRoot.split("/").pop()!
+    const pugToNormHtml = (path: string) => `${path.slice(path.indexOf(lastDir) + lastDir.length + 1, -3)}html`
+
+    plugin.generateBundle = async function () {
+      const template = (await readFile("./index.html", { encoding: "utf8" })).split(/(id=["']app["'].*>)/)
+      const templateEnd = template.pop()
+
+      const dirWalker = async (dir: string) => {
+        await Promise.all(
+          (await readdir(dir)).map(async file => {
+            let path = join(dir, file)
+            if ((await stat(path)).isDirectory()) {
+              return dirWalker(path)
+            } else {
+              const fileName = pugToNormHtml(path)
+              const source = [...template, await readFile(path, { encoding: "utf8" }), templateEnd].join("")
+              this.emitFile({ type: "asset", fileName, source })
+            }
+          })
+        )
+      }
+      await dirWalker(options.multiRoot!)
+    }
+  }
+
+  return plugin
 }
