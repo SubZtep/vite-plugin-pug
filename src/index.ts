@@ -15,8 +15,24 @@ export function pugs(html: string, pugger: (filename: string) => string, logger?
 }
 
 export default function (options?: Options, locals?: LocalsObject): Plugin {
+  const virtualPugId = "@pug"
+
   return {
     name: "vite-plugin-pug",
+
+    resolveId(id) {
+      if (id === virtualPugId) {
+        return virtualPugId
+      }
+    },
+
+    load(id) {
+      console.log("LOAD", id)
+      if (id === virtualPugId) {
+        // return "export const msg = 'lolkabolka';"
+        return `export const locals = ${JSON.stringify(locals)}`
+      }
+    },
 
     handleHotUpdate({ file, server }) {
       if (file.endsWith(".pug")) {

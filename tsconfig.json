@@ -4,7 +4,7 @@
     "module": "CommonJS",
     "lib": ["ES2019"],
     "moduleResolution": "Node",
-    "declaration": true,
+    "declaration": false,
     "declarationMap": false,
     "sourceMap": false,
     "outDir": "dist",
@@ -12,7 +12,8 @@
     "removeComments": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "typeRoots": ["./src/virtual.d.ts"]
   },
   "include": ["src"]
 }
