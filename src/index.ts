@@ -5,6 +5,11 @@ import { compileFile } from "pug"
 import { join } from "path"
 import chalk from "chalk"
 
+function pugToNormHtml(rootDir: string, pugPath: string) {
+  const lastDir = rootDir.split("/").pop()!
+  return `${pugPath.slice(pugPath.indexOf(lastDir) + lastDir.length + 1, -3)}html`
+}
+
 export function pugs(html: string, pugger: (filename: string) => string, logger?: Pick<Logger, "warn">) {
   return html.replace(/<pug.+?(file|src)="(.+?)".*?\/.*?>/gi, (_tag: string, attr: string, filename: string) => {
     if (attr === "file" && logger) {
@@ -22,46 +27,8 @@ interface PluginOptions {
 }
 
 export default function (options?: PluginOptions & Options, locals?: LocalsObject): Plugin {
-  // function dirWalker(dir: string) {
-  //   readdirSync(dir).forEach(file => {
-  //     let filepath = join(dir, file)
-  //     let stat = statSync(filepath)
-  //     if (stat.isDirectory()) {
-  //       dirWalker(filepath)
-  //     } else {
-  //       console.info(filepath + "\n")
-  //     }
-  //   })
-  // }
-
   const plugin: Plugin = {
     name: "vite-plugin-pug",
-
-    // build: {
-    //   rollupOptions: {
-    //     input: resolve(__dirname, "index.html"),
-    //   },
-    // },
-
-    // renderChunk(code, chunkInfo, options) {
-    //   // DIST JS FILES
-    //   // console.log("RENDERCHUNK", chunkInfo.fileName)
-    //   console.log("RENDERCHUNK", code)
-    //   // if (ch)
-    //   return "XXX"
-    // },
-
-    // transform(code, id) {
-    //   if (id.endsWith(".html")) {
-    //     // console.log("TRANSFORM", code)
-    //     return "BOOOBOOBHTML"
-    //   }
-    //   return undefined
-    // },
-
-    // generateBundle(options, bundle) {
-    //   this.emitFile({ type: "asset", fileName: "lolkabolka/index.html", source: "BROAFFFF" })
-    // },
 
     load(id) {
       if (id.endsWith(".pug.js")) {
@@ -86,12 +53,12 @@ export default function (options?: PluginOptions & Options, locals?: LocalsObjec
   }
 
   if (options?.multiRoot) {
-    const lastDir = options.multiRoot.split("/").pop()!
-    const pugToNormHtml = (path: string) => `${path.slice(path.indexOf(lastDir) + lastDir.length + 1, -3)}html`
-
     plugin.generateBundle = async function () {
-      const template = (await readFile("./index.html", { encoding: "utf8" })).split(/(id=["']app["'].*>)/)
-      const templateEnd = template.pop()
+      let template = await readFile("./index.html", { encoding: "utf8" })
+      template = pugs(template, filename => compileFile(filename, options)(locals), console)
+
+      const templateParts = template.split(/(id=["']app["'].*>)/)
+      const templateEnd = templateParts.pop()
 
       const dirWalker = async (dir: string) => {
         await Promise.all(
@@ -100,8 +67,8 @@ export default function (options?: PluginOptions & Options, locals?: LocalsObjec
             if ((await stat(path)).isDirectory()) {
               return dirWalker(path)
             } else {
-              const fileName = pugToNormHtml(path)
-              const source = [...template, await readFile(path, { encoding: "utf8" }), templateEnd].join("")
+              const fileName = pugToNormHtml(options.multiRoot!, path)
+              const source = [...templateParts, await readFile(path, { encoding: "utf8" }), templateEnd].join("")
               this.emitFile({ type: "asset", fileName, source })
             }
           })
