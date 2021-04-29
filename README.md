@@ -14,6 +14,7 @@ A plugin that makes [Vite](https://vitejs.dev/) parse `<pug src="example.pug"></
 - [x] Generated _TypeScript_ declarations.
 - [x] Reload when saving changes on a `.pug` file.
 - [x] Support Pug local variables.
+- [ ] **Templates for multiple inputs.** [_WIP_:link:](https://github.com/SubZtep/vite-plugin-pug/tree/multipage/examples/multiroot#readme)
 - [ ] _Experimental hot module reloading functionality._
 - [ ] _Handle adding or removing files._
 
