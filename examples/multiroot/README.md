@@ -18,8 +18,12 @@ At this point it starts to make Vite superfluous that questions the direction it
 $ gh repo clone SubZtep/vite-plugin-pug
 $ cd vite-plugin-pug
 $ npm i
+$ cd examples/multiroot/
+$ npm i
 $ npm run dev
 ```
+
+or use [codespace](https://subztep-vite-plugin-pug-fwpw.github.dev/).
 
 ## ETA? :mask:
 
