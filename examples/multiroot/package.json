@@ -1,0 +1,20 @@
+{
+  "name": "multiroot",
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "serve": "vite preview"
+  },
+  "dependencies": {
+    "navigo": "^8.11.1"
+  },
+  "devDependencies": {
+    "@types/node": "^15.0.1",
+    "@types/pug": "^2.0.4",
+    "postcss-nested": "^5.0.5",
+    "typescript": "^4.2.4",
+    "vite": "^2.2.3",
+    "vite-plugin-fonts": "^0.2.2"
+  }
+}

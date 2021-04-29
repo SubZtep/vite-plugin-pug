@@ -1,0 +1,74 @@
+:root {
+  --emphasized: #d4ddaa;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+#app {
+  padding-top: 35px;
+}
+
+.container {
+  max-width: 1200px;
+  padding: 0 15px;
+  margin: 0 auto;
+}
+
+.logo {
+  letter-spacing: -6px;
+  color: var(--emphasized);
+  font: bold 2.5rem monospace;
+  text-shadow: #b00 -2px 0 0;
+}
+
+a, a:link, a:active, a:visited {
+  transition: color 150ms ease-out;
+  font: 1.2rem/2rem Spectral;
+  text-decoration: none;
+  color: #eee;
+}
+
+a:hover {
+  color: var(--emphasized);
+}
+
+header {
+  top: 0;
+  width: 100%;
+  position: fixed;
+  background-color: #111;
+  box-shadow: 0px 2px 2px 0px #444b;
+  .container {
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+nav {
+  ul {
+    list-style-type: none;
+    display: flex;
+    margin: 0;
+    li {
+      margin: 0 10px;
+      &:last-of-type {
+        margin-right: 0;
+      }
+    }
+  }
+}
+
+h1 {
+  margin-top: 35px;
+  font: 3rem Spectral;
+}
+
+p {
+  font: 1.4rem/2rem Karla;
+  text-align: justify;
+}
