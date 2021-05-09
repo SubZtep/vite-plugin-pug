@@ -1,7 +1,20 @@
+import { join } from "path"
 import type { Options, LocalsObject } from "pug"
 import type { Logger, Plugin } from "vite"
 import { compileFile } from "pug"
 import chalk from "chalk"
+
+export type PluginOptions = Options & {
+  /**
+   * Look for pug files in the directory
+   * of currently compiled index.html
+   * (locally)
+   * instead of project root.
+   * 
+   * Can accept a function to determine the option per-html-file.
+   */
+  localImports?: boolean | ((htmlfile: string) => boolean);
+};
 
 export function pugs(html: string, pugger: (filename: string) => string, logger?: Pick<Logger, "warn">) {
   return html.replace(/<pug.+?(file|src)="(.+?)".*?\/.*?>/gi, (_tag: string, attr: string, filename: string) => {
@@ -28,8 +41,26 @@ export default function (options?: Options, locals?: LocalsObject): Plugin {
     },
 
     transformIndexHtml: {
-      transform(html, { server }) {
-        return pugs(html, filename => compileFile(filename, options)(locals), server?.config.logger)
+      transform(html, { server, filename: htmlfile }) {
+        return pugs(html, filename => {
+          let filepath = filename;
+
+          const compile = () => compileFile(filepath, options)(locals);
+
+          if (options?.localImports) {
+            if (typeof options.localImports === 'function' && !options.localImports(htmlfile)) {
+              return compile();
+            }
+
+            // extract current directory from the html file path
+            const filedir = htmlfile.replace(/(.*)\/.*\.html/, '$1')
+
+            // apply current directory to the pug file imported from html
+            filepath = join(filedir, filename)
+          }
+
+          return compile();
+        }, server?.config.logger)
       },
     },
   }
