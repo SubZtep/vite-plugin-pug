@@ -10,7 +10,7 @@ export type PluginOptions = Options & {
    * of currently compiled index.html
    * (locally)
    * instead of project root.
-   * 
+   *
    * Can accept a function to determine the option per-html-file.
    */
   localImports?: boolean | ((htmlfile: string) => boolean);
@@ -27,7 +27,7 @@ export function pugs(html: string, pugger: (filename: string) => string, logger?
   })
 }
 
-export default function (options?: Options, locals?: LocalsObject): Plugin {
+export default function (options?: PluginOptions, locals?: LocalsObject): Plugin {
   return {
     name: "vite-plugin-pug",
 
@@ -40,7 +40,6 @@ export default function (options?: Options, locals?: LocalsObject): Plugin {
       }
     },
 
-    
     transformIndexHtml: {
       transform(html, { server, filename: htmlfile }) {
         return pugs(html, filename => {
@@ -50,7 +49,7 @@ export default function (options?: Options, locals?: LocalsObject): Plugin {
             || options?.localImports
           ) {
             // extract current directory from the html file path
-            const filedir = htmlfile.replace(/(.*)\/.*\.html$/, '$1')
+            const filedir = htmlfile.replace(/(.*)[\\\/].*\.html$/, '$1')
 
             // apply current directory to the pug file imported from html
             const filepath = join(filedir, filename);

@@ -14,7 +14,7 @@ A plugin that makes [Vite](https://vitejs.dev/) parse `<pug src="example.pug"></
 - [x] Generated _TypeScript_ declarations.
 - [x] Reload when saving changes on a `.pug` file.
 - [x] Support Pug local variables.
-- [ ] **Templates for multiple inputs.** [_WIP_:link:](https://github.com/SubZtep/vite-plugin-pug/tree/multipage/examples/multiroot#readme)
+- [x] Templates for multiple inputs.
 - [ ] _Experimental hot module reloading functionality._
 - [ ] _Handle adding or removing files._
 
@@ -39,18 +39,23 @@ const options = { pretty: true } // FIXME: pug pretty is deprecated!
 const locals = { name: "My Pug" }
 
 export default defineConfig({
-  plugins: [
-    pugPlugin(options, locals)
-  ]
+  plugins: [pugPlugin(options, locals)],
 })
 ```
 
 ### Plugin Parameters
 
-| Name    | Required | Description                                                         |
-| ------- | -------- | ------------------------------------------------------------------- |
-| options | optional | [Pug options](https://pugjs.org/api/reference.html#options) object. |
-| locals  | optional | Data object with Pug locals.                                        |
+| Name    | Required | Description                               |
+| ------- | -------- | ----------------------------------------- |
+| options | optional | [Plugin options](#plugin-options) object. |
+| locals  | optional | Data object with Pug locals.              |
+
+### Plugin Options
+
+| Name         | Required | Description                                                                       |
+| ------------ | -------- | --------------------------------------------------------------------------------- |
+| ...          | optional | Anything from [Pug options](https://pugjs.org/api/reference.html#options) object. |
+| localImports | optional | If `true`, use relative imports in the pug src attribute.                             |
 
 ## Usage
 
@@ -80,9 +85,9 @@ That's it.
 
 > :bulb: Check out **its starter** implementation [in this repository](https://github.com/SubZtep/css-tetris-3d).
 
-## Example
+## Examples
 
-Please find the [examples](examples/multipage) folder in this repository.
+Please find the [examples](examples/) folder in this repository.
 
 ## Contribution
 
