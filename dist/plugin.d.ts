@@ -16,6 +16,6 @@ interface Props {
 /**
  * Main plugin. Single object prop is the way.
  */
-declare function PugPlugin({ options, locals, localImports }: Props): Plugin;
+declare function PugPlugin({ options, locals, localImports }?: Props): Plugin;
 export default PugPlugin;
 export declare function resolvePugTag(html: string, pugger: (filename: string) => string, logger?: Pick<Logger, "warn">): string;

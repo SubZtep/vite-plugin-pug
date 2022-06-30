@@ -27,7 +27,7 @@ interface Props {
 /**
  * Main plugin. Single object prop is the way.
  */
-function PugPlugin({ options, locals, localImports }: Props): Plugin
+function PugPlugin({ options, locals, localImports }?: Props): Plugin
 function PugPlugin(options?: PluginOptions, locals?: LocalsObject): Plugin {
   return {
     name: "vite-plugin-pug",
