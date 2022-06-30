@@ -1,21 +1,16 @@
 import type { Logger, Plugin } from "vite"
 import type { Options, LocalsObject } from "pug"
-// import { join } from "node:path"
 import { isPug } from "./lib"
 import { compileFile } from "pug"
 
+/** @deprecated */
 type PluginOptions = Options & {
-  /**
-   * Search Pug files in the directory of currently compiled
-   * index.html (locally) instead of project root. \
-   * Can accept a function to determine the option per-html-file. _(wat?xD)_
-   */
   localImports?: boolean | ((htmlfile: string) => boolean)
 }
 
 interface Props {
   /** Pug compiler options — https://pugjs.org/api/reference.html#options */
-  options?: PluginOptions
+  options?: Options
 
   /** Pug enviroment, key/value object with local variables */
   locals?: LocalsObject
@@ -26,25 +21,27 @@ interface Props {
    * Can accept a function to determine the option per-html-file. \
    * **TODO: _(wat?xD)_**
    */
-   localImports?: boolean | ((htmlfile: string) => boolean)
+  localImports?: boolean | ((htmlfile: string) => boolean)
 }
 
-export default function ({ options, locals, localImports }: Props): Plugin {
+/**
+ * Main plugin. Single object prop is the way.
+ */
+function PugPlugin({ options, locals, localImports }: Props): Plugin
+function PugPlugin(options?: PluginOptions, locals?: LocalsObject): Plugin {
   return {
     name: "vite-plugin-pug",
 
     handleHotUpdate({ file, server }) {
       if (isPug(file)) {
         server.config.logger.info(`pug’s not hot 🌭 ${file}`)
-        server.ws.send({
-          type: "full-reload",
-        })
+        server.ws.send({ type: "full-reload" })
       }
     },
 
     transformIndexHtml: {
       transform(html, { server, filename: htmlfile }) {
-        return pugs(
+        return resolvePugTag(
           html,
           filename => {
             const compile = (filepath: string) => compileFile(filepath, options)(locals)
@@ -71,7 +68,10 @@ export default function ({ options, locals, localImports }: Props): Plugin {
   }
 }
 
-export function pugs(html: string, pugger: (filename: string) => string, logger?: Pick<Logger, "warn">) {
+export default PugPlugin
+
+export function resolvePugTag(html: string, pugger: (filename: string) => string, logger?: Pick<Logger, "warn">) {
+  // TODO: if src is missing, use the tag content string as pug string
   return html.replace(/<pug.+?(file|src)="(.+?)".*?\/.*?>/gi, (_tag: string, attr: string, filename: string) => {
     return pugger(filename)
   })

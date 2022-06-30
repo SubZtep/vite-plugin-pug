@@ -2,8 +2,8 @@
 
 > New version is on the way. changelog:
 > - some structural changes for extendability
-> - Plugin has a single object attribute
-> - Drop deprecated `file` attribute in favour of `src`
+> - Plugin has a single object attribute, multiple attributes are deprecated
+> - Deprecated `file` attribute is even more deprecated in favour of `src`
 
 ---
 

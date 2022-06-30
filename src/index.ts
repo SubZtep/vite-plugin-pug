@@ -1,1 +1,1 @@
-export { default, pugs } from "./plugin"
+export { default, resolvePugTag as pugs } from "./plugin"
