@@ -1,5 +1,12 @@
 # vite-plugin-pug
 
+> New version is on the way. changelog:
+> - some structural changes for extendability
+> - Plugin has a single object attribute
+> - Drop deprecated `file` attribute in favour of `src`
+
+---
+
 ![test](https://github.com/SubZtep/vite-plugin-pug/workflows/npm%20test/badge.svg)
 
 A plugin that makes [Vite](https://vitejs.dev/) parse `<pug src="example.pug"></pug>` in your `index.html`. The rendered template replaces this tag with the compiled markup.

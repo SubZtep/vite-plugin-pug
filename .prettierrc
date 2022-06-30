@@ -1,5 +1,5 @@
-{
-  "semi": false,
-  "arrowParens": "avoid",
-  "printWidth": 120
-}
+semi: false
+printWidth: 120
+trailingComma: all
+endOfLine: lf
+arrowParens: avoid
