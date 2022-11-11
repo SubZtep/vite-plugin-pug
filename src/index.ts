@@ -2,6 +2,7 @@ import { join } from "node:path"
 import type { Options as PugOptions, LocalsObject } from "pug"
 import type { Logger, Plugin } from "vite"
 import { compileFile } from "pug"
+import pc from "picocolors"
 
 interface PluginOptions extends PugOptions {
   /**
@@ -18,7 +19,11 @@ interface PluginOptions extends PugOptions {
 export function pugs(html: string, pugger: (filename: string) => string, logger?: Pick<Logger, "warn">) {
   return html.replace(/<pug.+?(file|src)="(.+?)".*?\/.*?>/gi, (_tag: string, attr: string, filename: string) => {
     if (attr === "file" && logger) {
-      logger.warn(`the \`file\` attribute is deprecated, please include ${filename} with \`src\` instead`)
+      logger.warn(
+        `${pc.red(`the ${pc.bold(`file`)} attribute is deprecated,`)} ${pc.cyan(
+          `please include ${pc.italic(filename)} with ${pc.bold(`src`)} instead`
+        )}`
+      )
     }
     return pugger(filename)
   })
@@ -30,7 +35,7 @@ export default function pugPlugin(options?: PluginOptions, locals?: LocalsObject
 
     handleHotUpdate({ file, server }) {
       if (file.endsWith(".pug")) {
-        server.config.logger.info(`pug’s not hot 🌭 ${file}`)
+        server.config.logger.info(`${pc.red(`pug’s not hot`)} 🌭 ${pc.cyan(file)}`)
         server.ws.send({
           type: "full-reload"
         })
