@@ -1,5 +1,8 @@
-{
-  "semi": false,
-  "arrowParens": "avoid",
-  "printWidth": 120
-}
+semi: false
+endOfLine: lf
+printWidth: 120
+arrowParens: avoid
+trailingComma: none
+pugEmptyAttributes: none
+pugAttributeSeparator: none
+pugClosingBracketPosition: last-line

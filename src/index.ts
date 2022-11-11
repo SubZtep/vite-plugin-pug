@@ -1,10 +1,9 @@
-import { join } from "path"
-import type { Options, LocalsObject } from "pug"
+import { join } from "node:path"
+import type { Options as PugOptions, LocalsObject } from "pug"
 import type { Logger, Plugin } from "vite"
 import { compileFile } from "pug"
-import pc from "picocolors"
 
-export type PluginOptions = Options & {
+interface PluginOptions extends PugOptions {
   /**
    * Look for pug files in the directory
    * of currently compiled index.html
@@ -19,25 +18,21 @@ export type PluginOptions = Options & {
 export function pugs(html: string, pugger: (filename: string) => string, logger?: Pick<Logger, "warn">) {
   return html.replace(/<pug.+?(file|src)="(.+?)".*?\/.*?>/gi, (_tag: string, attr: string, filename: string) => {
     if (attr === "file" && logger) {
-      logger.warn(
-        `${pc.red(`the ${pc.bold(`file`)} attribute is deprecated,`)} ${pc.cyan(
-          `please include ${pc.italic(filename)} with ${pc.bold(`src`)} instead`
-        )}`
-      )
+      logger.warn(`the \`file\` attribute is deprecated, please include ${filename} with \`src\` instead`)
     }
     return pugger(filename)
   })
 }
 
-export default function (options?: PluginOptions, locals?: LocalsObject): Plugin {
+export default function pugPlugin(options?: PluginOptions, locals?: LocalsObject): Plugin {
   return {
     name: "vite-plugin-pug",
 
     handleHotUpdate({ file, server }) {
       if (file.endsWith(".pug")) {
-        server.config.logger.info(`${pc.red(`pug’s not hot`)} 🌭 ${pc.cyan(file)}`)
+        server.config.logger.info(`pug’s not hot 🌭 ${file}`)
         server.ws.send({
-          type: "full-reload",
+          type: "full-reload"
         })
       }
     },
@@ -65,7 +60,7 @@ export default function (options?: PluginOptions, locals?: LocalsObject): Plugin
           },
           server?.config.logger
         )
-      },
-    },
+      }
+    }
   }
 }

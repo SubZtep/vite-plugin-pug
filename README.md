@@ -6,7 +6,7 @@ A plugin that makes [Vite](https://vitejs.dev/) parse `<pug src="example.pug"></
 
 > :information_source: **Vue** single file components don’t require this plugin, adding [Pug](https://www.npmjs.com/package/pug) to the dependency list is enough. — aka `npm i -D pug`
 
-## Features (exists and awaiting)
+## Features
 
 - [x] CommonJS and ES module builds.
 - [x] Handle self-closing `pug` tags.
@@ -18,15 +18,19 @@ A plugin that makes [Vite](https://vitejs.dev/) parse `<pug src="example.pug"></
 - [ ] _Experimental hot module reloading functionality._
 - [ ] _Handle adding or removing files._
 
-## Installation
+## Add to a project
 
-Using npm:
+### Installation
+
+Choose your appropriate choice:
 
 ```sh
-$ npm install vite-plugin-pug --save-dev
+$ npm i -D vite-plugin-pug
+$ pnpm add -D vite-plugin-pug
+$ yarn add -D vite-plugin-pug
 ```
 
-## Configuration
+### Configuration
 
 Create a `vite.config.js` [configuration file](https://vitejs.dev/config/) and import the plugin:
 
@@ -55,7 +59,7 @@ export default defineConfig({
 | Name         | Required | Description                                                                       |
 | ------------ | -------- | --------------------------------------------------------------------------------- |
 | ...          | optional | Anything from [Pug options](https://pugjs.org/api/reference.html#options) object. |
-| localImports | optional | If `true`, use relative imports in the pug src attribute.                             |
+| localImports | optional | If `true`, use relative imports in the pug src attribute.                         |
 
 ## Usage
 
