@@ -3,6 +3,7 @@ import type { Options as PugOptions, LocalsObject } from "pug"
 import type { Logger, Plugin } from "vite"
 import { compileFile } from "pug"
 import pc from "picocolors"
+import { pugs } from "./lib"
 
 interface PluginOptions extends PugOptions {
   /**
@@ -14,19 +15,6 @@ interface PluginOptions extends PugOptions {
    * Can accept a function to determine the option per-html-file.
    */
   localImports?: boolean | ((htmlfile: string) => boolean)
-}
-
-export function pugs(html: string, pugger: (filename: string) => string, logger?: Pick<Logger, "warn">) {
-  return html.replace(/<pug.+?(file|src)="(.+?)".*?\/.*?>/gi, (_tag: string, attr: string, filename: string) => {
-    if (attr === "file" && logger) {
-      logger.warn(
-        `${pc.red(`the ${pc.bold(`file`)} attribute is deprecated,`)} ${pc.cyan(
-          `please include ${pc.italic(filename)} with ${pc.bold(`src`)} instead`
-        )}`
-      )
-    }
-    return pugger(filename)
-  })
 }
 
 export default function pugPlugin(options?: PluginOptions, locals?: LocalsObject): Plugin {
@@ -42,8 +30,14 @@ export default function pugPlugin(options?: PluginOptions, locals?: LocalsObject
       }
     },
 
+    // transform(code, id) {
+    //   // server?.config.logger.info(htmlfile)
+    //   console.log("QQQQQQQQQQQQQQQQQQQQQQQQQ", id)
+    // },
+
     transformIndexHtml: {
       transform(html, { server, filename: htmlfile }) {
+        // server?.config.logger.info(htmlfile)
         return pugs(
           html,
           filename => {

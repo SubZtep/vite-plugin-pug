@@ -1,4 +1,4 @@
-import { pugs } from "../src/index"
+import { pugs } from "../src/lib"
 import { test, expect } from "vitest"
 
 const html = `<html>

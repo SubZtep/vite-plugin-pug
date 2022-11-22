@@ -1,10 +1,33 @@
-# vite-plugin-pug
+# :first_quarter_moon: vite-plugin-pug :last_quarter_moon:
 
-![test](https://github.com/SubZtep/vite-plugin-pug/workflows/npm%20test/badge.svg)
+> > > > > > > > > > > > > > ```
+> > > > > > > > > > > > > > ⠀⠀⠀⡠⣠⠔⠂⠉⠉⠩⡉⠒⠢⣖⠠⡀⠀⠀⠀⠀
+> > > > > > > > > > > > > > ⢠⠖⢹⡎⠁⢀⠐⠁⢀⠇⢠⡦⣀⠻⣦⡀⢉⡗⠀⠀
+> > > > > > > > > > > > > > ⠘⢇⣸⡤⣶⣶⣞⣷⣼⣴⣼⣿⣶⡦⠈⢫⡾⠁⠀⠀
+> > > > > > > > > > > > > > ⠀⠈⢛⠀⣛⣿⣿⠿⣿⠷⠛⢟⣛⡁⠀⠇⠀⠀⠀⠀
+> > > > > > > > > > > > > > ⠀⠀⠸⡄⠻⣮⣛⡿⢿⢬⣛⣭⣿⠃⢠⣇⠀⠀⠀⠀
+> > > > > > > > > > > > > > ⠀⠀⡼⡌⠂⡈⠫⢣⣜⣠⡿⠗⠁⢂⠕⠹⡀⠀⠀⠀
+> > > > > > > > > > > > > > ⠀⠀⡱⡘⢄⠈⠢⡀⠀⠂⢀⠀⡐⠁⠠⠃⢃⠀⠀⠀
+> > > > > > > > > > > > > > ⠀⠀⡇⠑⠄⠑⢀⠈⠢⡈⠀⠀⠀⡠⠂⠀⣈⠀⠀⠀
+> > > > > > > > > > > > > > ⠀⠀⣇⠀⠀⠀⢀⣀⡀⢀⠀⠀⠀⠀⠀⠀⡏⡄⠀⠀
+> > > > > > > > > > > > > > ⠀⠀⡏⠀⢠⡂⠀⠀⠀⠀⠀⠀⠐⡄⠀⠀⡏⠙⡄⠀
+> > > > > > > > > > > > > > ⠀⠀⡇⠀⢸⡁⠀⠀⠀⠀⠀⠀⠀⢹⠀⠀⡇⠀⠁⠀
+> > > > > > > > > > > > > > ⢀⡠⠃⠀⡸⢊⢢⡀⠀⠀⠀⠀⢀⡌⠀⢠⣁⣠⡃⠀
+> > > > > > > > > > > > > > ⢿⣋⣆⡰⠓⠓⠊⠀⠉⠀⠀⠉⠁⢇⠀⡘⣳⣄⡪⠆
+> > > > > > > > > > > > > > ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠉⠉⠁⠀⠀⠀
+> > ```
+> ```
 
-A plugin that makes [Vite](https://vitejs.dev/) parse `<pug src="example.pug"></pug>` in your `index.html`. The rendered template replaces this tag with the compiled markup.
+## Usage
 
-> :information_source: **Vue** single file components don’t require this plugin, adding [Pug](https://www.npmjs.com/package/pug) to the dependency list is enough. — aka `npm i -D pug`
+[Vite](https://vitejs.dev/) plugin that replaces **\<pug \/\>** tags with compiled and rendered templates in the **index.html**.
+
+| Embed source              | ~~Embed inline~~ ₿ | Pages hierarchy  |
+| ------------------------- | ------------------ | ---------------- |
+| `<pug src="example.pug">` | `<pug>`            | `index.pug`      |
+| `</pug>`                  | `button#id.class(onclick=";")` | `fluffy.pug` |
+|                           | ` ` ` ` `Click me` | `base/index.pug` |
+|                           | `</pug>`           | |
 
 ## Features
 
@@ -17,17 +40,18 @@ A plugin that makes [Vite](https://vitejs.dev/) parse `<pug src="example.pug"></
 - [x] Templates for multiple inputs.
 - [ ] _Experimental hot module reloading functionality._
 - [ ] _Handle adding or removing files._
+- [ ] _Support nested page structure._
 
 ## Add to a project
 
-### Installation
-
-Choose your appropriate choice:
+Install with your appropriate choice:
 
 ```sh
-$ npm i -D vite-plugin-pug
-$ pnpm add -D vite-plugin-pug
-$ yarn add -D vite-plugin-pug
+$ npm install --save-dev vite-plugin-pug
+
+$ pnpm add --save-dev vite-plugin-pug
+
+$ yarn add --dev vite-plugin-pug
 ```
 
 ### Configuration
@@ -51,7 +75,7 @@ export default defineConfig({
 
 | Name    | Required | Description                               |
 | ------- | -------- | ----------------------------------------- |
-| options | optional | [Plugin options](#plugin-options) object. |
+| options | optional | Plugin and [Pug options](https://pugjs.org/api/reference.html#options) object merged |
 | locals  | optional | Data object with Pug locals.              |
 
 ### Plugin Options
@@ -87,6 +111,10 @@ Embed `pug` tag with `src` attribute somewhere.
 
 That's it.
 
+
+> :information_source: **Vue** SFC (and similar frameworks) don’t require this plugin, adding [the Pug package](https://www.npmjs.com/package/pug) to the dependency list is enough. — `$ npm i -D pug`
+
+
 > :bulb: Check out **its starter** implementation [in this repository](https://github.com/SubZtep/css-tetris-3d).
 
 ## Examples
@@ -98,3 +126,6 @@ Please find the [examples](examples/) folder in this repository.
 ~~After Rollup~~ I started to use _**Vite**_ recently but this is not a reason to leave my beloved template format behind. Its [lack of active](https://github.com/marlonmarcello/vite-plugin-pug) Pug plugins made me make one quickly. It does the job to me, I will extend it when I need it. :suspect:
 
 If it doesn't match with your setup please [start a new discussion](https://github.com/SubZtep/vite-plugin-pug/discussions/new) about it, I'm interested to see other workflows. If something is simply not working, please [raise an issue](https://github.com/SubZtep/vite-plugin-pug/issues/new). **PRs certainly welcome!** (.❛ ᴗ ❛.)
+
+
+![test](https://github.com/SubZtep/vite-plugin-pug/workflows/npm%20test/badge.svg)
