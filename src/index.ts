@@ -16,16 +16,16 @@ interface PluginOptions extends PugOptions {
   localImports?: boolean | ((htmlfile: string) => boolean)
 }
 
-export function pugs(html: string, pugger: (filename: string) => string, logger?: Pick<Logger, "warn">) {
-  return html.replace(/<pug.+?(file|src)="(.+?)".*?\/.*?>/gi, (_tag: string, attr: string, filename: string) => {
-    if (attr === "file" && logger) {
+export function pugs(html: string, pugger: (filename: string, tagLocals: Record<string, unknown>) => string, logger?: Pick<Logger, "warn">) {
+  return html.replace(/<pug.+?(file|src)="(.+?)".+?(locals="(.+?)")?.*?\/.*?>/gi, (_tag: string, srcAttribute: string, filename: string, _tagLocalsAttribute: string, tagLocals: string) => {
+    if (srcAttribute === "file" && logger) {
       logger.warn(
         `${pc.red(`the ${pc.bold(`file`)} attribute is deprecated,`)} ${pc.cyan(
           `please include ${pc.italic(filename)} with ${pc.bold(`src`)} instead`
         )}`
       )
     }
-    return pugger(filename)
+    return pugger(filename, tagLocals ? JSON.parse(decodeURIComponent(tagLocals)) : {})
   })
 }
 
@@ -46,8 +46,8 @@ export default function pugPlugin(options?: PluginOptions, locals?: LocalsObject
       transform(html, { server, filename: htmlfile }) {
         return pugs(
           html,
-          filename => {
-            const compile = (filepath: string) => compileFile(filepath, options)(locals)
+          (filename, tagLocals) => {
+            const compile = (filepath: string) => compileFile(filepath, options)({ ...locals, ...tagLocals })
             if (
               (typeof options?.localImports === "function" && options.localImports(htmlfile)) ||
               options?.localImports
