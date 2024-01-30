@@ -42,30 +42,28 @@ export default function pugPlugin(options?: PluginOptions, locals?: LocalsObject
       }
     },
 
-    transformIndexHtml: {
-      transform(html, { server, filename: htmlfile }) {
-        return pugs(
-          html,
-          filename => {
-            const compile = (filepath: string) => compileFile(filepath, options)(locals)
-            if (
-              (typeof options?.localImports === "function" && options.localImports(htmlfile)) ||
-              options?.localImports
-            ) {
-              // extract current directory from the html file path
-              const filedir = htmlfile.replace(/(.*)[\\\/].*\.html$/, "$1")
+    transformIndexHtml(html, { server, filename: htmlfile }) {
+      return pugs(
+        html,
+        filename => {
+          const compile = (filepath: string) => compileFile(filepath, options)(locals)
+          if (
+            (typeof options?.localImports === "function" && options.localImports(htmlfile)) ||
+            options?.localImports
+          ) {
+            // extract current directory from the html file path
+            const filedir = htmlfile.replace(/(.*)[\\\/].*\.html$/, "$1")
 
-              // apply current directory to the pug file imported from html
-              const filepath = join(filedir, filename)
+            // apply current directory to the pug file imported from html
+            const filepath = join(filedir, filename)
 
-              return compile(filepath)
-            }
+            return compile(filepath)
+          }
 
-            return compile(filename)
-          },
-          server?.config.logger
-        )
-      }
+          return compile(filename)
+        },
+        server?.config.logger
+      )
     }
   }
 }
