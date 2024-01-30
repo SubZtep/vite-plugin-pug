@@ -51,14 +51,14 @@
   },
   "homepage": "https://github.com/SubZtep/vite-plugin-pug#readme",
   "dependencies": {
-    "pug": "^3.0.2",
-    "picocolors": "~1"
+    "picocolors": "~1",
+    "pug": "^3.0.2"
   },
   "devDependencies": {
     "@types/pug": "^2.0.6",
     "tsup": "^6.4.0",
     "typescript": "^4.8.4",
-    "vite": "^3.2.3",
+    "vite": "^5.0.12",
     "vitest": "^0.25.1"
   }
 }
