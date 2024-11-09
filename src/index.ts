@@ -17,7 +17,7 @@ interface PluginOptions extends PugOptions {
 }
 
 export function pugs(html: string, pugger: (filename: string) => string, logger?: Pick<Logger, "warn">) {
-  return html.replace(/<pug.+?(file|src)="(.+?)".*?\/.*?>/gi, (_tag: string, attr: string, filename: string) => {
+  return html.replace(/<pug.+?(file|src)=(['"])(.+?)\2.*?\/.*?>/gi, (_tag: string, attr: string, _quotes: string, filename: string) => {
     if (attr === "file" && logger) {
       logger.warn(
         `${pc.red(`the ${pc.bold(`file`)} attribute is deprecated,`)} ${pc.cyan(

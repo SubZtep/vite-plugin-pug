@@ -4,9 +4,12 @@ import { test, expect } from "vitest"
 const html = `<html>
     <pug>moo</pug>
     <pug file="inner.pug"/>
-    <pug file="INner2.pug" />
+    <pug file='inner.pug'/>
+    <pug file='INner2.pug' />
     <pug file="./nested/inner3.pug"></pug>
+    <pug file='./nested/inner3.pug'></pug>
     <pug src="nested/inner4.pug">hello</pug>
+    <pug src='nested/inner4.pug'>hello</pug>
     <p>a</p>
   </html>`
 
